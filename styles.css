@@ -18,7 +18,7 @@
   --pad: 32px;
   --gap: 24px;
   --hero-pad: 104px;
-  --sec-pad: 136px; /* was 176px */
+  --sec-pad: 176px;
   --row-pad: 22px;
 }
 
@@ -216,6 +216,22 @@ a:hover .roll > span, a:hover .roll::after { transform: translateY(-100%); }
 }
 
 .hero { padding: var(--hero-pad) var(--pad) 0; }
+/* Hero fills the first screen below the header; the intro sits near the bottom edge. */
+.hero {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 60px);
+  min-height: calc(100svh - 60px);
+  padding-bottom: 56px;
+}
+.hero > .grid { flex: 1; align-content: space-between; }
+@media (max-width: 759.98px) {
+  .hero { min-height: calc(100svh - 84px - 56px); padding-bottom: 32px; }
+  .hero > .grid { align-content: start; }
+}
+/* boards.html frames are as tall as the page, so give the hero a fixed screen height there */
+.is-frame .hero { min-height: 840px; }
+@media (max-width: 759.98px) { .is-frame .hero { min-height: 700px; } }
 .hero h1 {
   grid-column: 1 / span 8;
   grid-row: 1;
@@ -401,6 +417,8 @@ main { overflow-x: clip; }
 .svc-incl { grid-column: 8 / span 3; grid-row: 1; margin: 0; font-size: 14px; line-height: 1.5; max-width: 36ch; text-wrap: pretty; }
 .svc-price { grid-column: 11 / span 2; grid-row: 1; justify-self: end; font-size: 14px; font-weight: 500; white-space: nowrap; }
 .svc-note { margin-top: 20px; }
+/* The services block ends with a small note, so the next section starts a little sooner. */
+#about { padding-top: calc(var(--sec-pad) - 64px); }
 .svc-note p { grid-column: 8 / span 5; margin: 0; font-size: 13px; color: var(--muted); text-wrap: pretty; }
 @media (max-width: 759.98px) {
   .svc-row .num { grid-column: 1 / span 2; }
