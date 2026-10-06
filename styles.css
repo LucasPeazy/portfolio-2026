@@ -18,7 +18,7 @@
   --pad: 32px;
   --gap: 24px;
   --hero-pad: 104px;
-  --sec-pad: 176px;
+  --sec-pad: 136px; /* was 176px */
   --row-pad: 22px;
 }
 
