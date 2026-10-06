@@ -71,7 +71,7 @@ window.SITE = (() => {
   };
 
   // `shot: [width, height]` means assets/works/<slug>.webp (full page) and <slug>-thumb.webp (16:10 preview) exist.
-  // Projects without it show hatched placeholders.
+  // Projects without it are hidden on the site until screenshots are added.
   const PROJECTS = [
     { slug: 'hanc-ai', shot: [1440, 14107], name: 'hanc.ai', url: 'https://hanc.ai', link: 'site', stack: 'React, Tailwind, GSAP, Firebase, Figma',
       ru: { title: 'Платформа голосового агента (hanc.ai)', type: 'Веб-приложение', services: 'Дизайн интерфейса, лендинг, фронтенд',

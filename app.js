@@ -1,7 +1,9 @@
 (() => {
   'use strict';
 
-  const { LINKS, DICT, PROJECTS: P, SHOT_H, PHOTO } = window.SITE;
+  const { LINKS, DICT, PROJECTS, SHOT_H, PHOTO } = window.SITE;
+  // Only projects with screenshots are shown; the rest stay in content.js for later.
+  const P = PROJECTS.filter(p => p.shot);
   const ANGLES = [135, 45, 90, 0, 120, 60, 150, 30, 105, 75];
   const SHOWN = 6;
   const pad2 = n => String(n).padStart(2, '0');
