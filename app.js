@@ -552,7 +552,12 @@
   app.addEventListener('mouseover', e => {
     if (isMobile()) return;
     const row = e.target.closest('.work-row');
-    if (row && !row.classList.contains('is-hover')) hoverRow(row);
+    if (!row || row.classList.contains('is-hover')) return;
+    // The list can scroll under a resting pointer before any mousemove, so take the position from here.
+    cursor.x = e.clientX;
+    cursor.y = e.clientY;
+    if (!cursor.active) { cursor.cx = e.clientX; cursor.cy = e.clientY; }
+    hoverRow(row);
   });
   app.addEventListener('mouseout', e => {
     const list = e.target.closest('.work-list');
