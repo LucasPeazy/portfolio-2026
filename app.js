@@ -25,6 +25,7 @@
     shot: null, // null = match the current viewport
     details: false,
     lastHover: 0,
+    contact: false, // contact form panel open
   };
   const frameId = q.get('frame');
   const qModal = parseInt(q.get('modal'), 10);
@@ -103,7 +104,7 @@
   <div class="hdr-d grid">
     <a href="#top" class="logo">web is everything</a>
     <nav>${nav(d)}</nav>
-    <div class="hdr-right">${langSwitch()}<a class="lnk" href="#contact">${roll(`→ ${d.cta}`)}</a></div>
+    <div class="hdr-right">${langSwitch()}<a class="lnk" href="#contact" data-action="contact-open">${roll(`→ ${d.cta}`)}</a></div>
   </div>
 </header>
 <header class="hdr hdr--m">
@@ -176,29 +177,12 @@
     </div>
   </section>
 
-  <section id="contact" class="section">
-    <div class="sec-head grid" data-reveal><h2>${d.contact}</h2></div>
-    <p class="big-mail" data-reveal="rise"><span class="rise"><a href="mailto:lucas.peazy@gmail.com">${d.big.replace('\n', '<br>')}</a></span></p>
-    <div class="contact-body grid">
-      <div class="contact-links" data-reveal>
-        <p>${d.contactNote}</p>
-        ${lk.map(l => `<div class="contact-link"><span>${l.label}</span><a class="lnk" href="${l.href}"${l.ext}>${roll(l.text)}</a></div>`).join('')}
-      </div>
-      <form class="form" data-reveal novalidate>
-        ${state.sent ? `<p class="sent" role="status">${d.sent}</p>` : `
-        <label><span>${d.fName}</span><input name="name" required autocomplete="name"></label>
-        <label><span>${d.fContact}</span><input name="contact" required></label>
-        <label><span>${d.fTask}</span><textarea name="task" rows="3"></textarea></label>
-        <button type="submit">→ ${d.send}</button>`}
-      </form>
-    </div>
-  </section>
 </main>
 
-<footer class="footer">
+<footer class="footer" id="contact">
   <div class="footer-inner">
     <div class="footer-top">
-      <a class="footer-cta lnk" href="https://t.me/whitenovacanee" target="_blank" rel="noopener">${roll(`→ ${d.cta}`)}</a>
+      <button type="button" class="footer-cta lnk plain-btn" data-action="contact-open" aria-haspopup="dialog">${roll(`→ ${d.cta}`)}</button>
       <div class="footer-col">
         <h2>${d.footNav}</h2>
         <a class="lnk" href="#work">${roll(d.navWork)}</a>
@@ -218,6 +202,30 @@
     </div>
   </div>
 </footer>
+
+
+<div class="contact-panel${state.contact ? ' is-open' : ''}" role="dialog" aria-modal="true" aria-labelledby="cp-title"${state.contact ? '' : ' inert'}>
+  <div class="cpanel-inner" data-lenis-prevent>
+    <div class="cpanel-bar">
+      <span class="muted">(${d.contact})</span>
+      <button type="button" class="plain-btn close-btn" data-action="contact-close" aria-label="${d.m.close}">×</button>
+    </div>
+    <h2 class="big-mail cp-anim" id="cp-title" style="--d:.35s">${d.big.replace('\n', '<br>')}</h2>
+    <div class="contact-body grid">
+      <div class="contact-links cp-anim" style="--d:.5s">
+        <p>${d.contactNote}</p>
+        ${lk.map(l => `<div class="contact-link"><span>${l.label}</span><a class="lnk" href="${l.href}"${l.ext}>${roll(l.text)}</a></div>`).join('')}
+      </div>
+      <form class="form cp-anim" style="--d:.6s" novalidate>
+        ${state.sent ? `<p class="sent" role="status">${d.sent}</p>` : `
+        <label><span>${d.fName}</span><input name="name" required autocomplete="name"></label>
+        <label><span>${d.fContact}</span><input name="contact" required></label>
+        <label><span>${d.fTask}</span><textarea name="task" rows="3"></textarea></label>
+        <button type="submit">→ ${d.send}</button>`}
+      </form>
+    </div>
+  </div>
+</div>
 
 <a class="tg-bar" href="https://t.me/whitenovacanee" target="_blank" rel="noopener"><span>→ ${d.cta}</span><small>Telegram</small></a>`;
   }
@@ -285,6 +293,12 @@
   const headerOffset = () => (isMobile() ? -70 : -76);
 
   function scrollToEl(el) {
+    if (el.classList && el.classList.contains('footer')) {
+      const end = document.documentElement.scrollHeight;
+      if (lenis) lenis.scrollTo(end, { duration: 1.6 });
+      else window.scrollTo({ top: end, behavior: reducedMotion ? 'auto' : 'smooth' });
+      return;
+    }
     if (lenis) lenis.scrollTo(el === document.body ? 0 : el, { offset: el === document.body ? 0 : headerOffset(), duration: 1.4 });
     else el.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
   }
@@ -303,7 +317,7 @@
     if (!footer || !main) return;
     const barH = isMobile() ? 56 : 0;
     // A footer taller than the screen can't be uncovered in full, so it scrolls normally.
-    footer.classList.toggle('is-static', footer.offsetHeight > window.innerHeight - barH);
+    footer.classList.toggle('is-static', footer.offsetHeight > window.innerHeight - barH + 1);
     const shown = window.innerHeight - barH - main.getBoundingClientRect().bottom;
     const p = Math.max(0, Math.min(1, shown / footer.offsetHeight));
     footer.style.setProperty('--reveal', still ? 1 : p.toFixed(3));
@@ -386,6 +400,36 @@
     if (list && !list.contains(e.relatedTarget)) clearHover(list);
   });
 
+  /* ---------- Contact form panel ---------- */
+
+  let contactReturn = null;
+
+  function openContact(opener) {
+    const panel = app.querySelector('.contact-panel');
+    if (!panel || state.contact) return;
+    contactReturn = opener || document.activeElement;
+    clearHover(app.querySelector('.work-list'));
+    state.contact = true;
+    panel.inert = false;
+    panel.classList.add('is-open');
+    document.documentElement.style.overflow = 'hidden';
+    if (lenis) lenis.stop();
+    const first = panel.querySelector('input');
+    setTimeout(() => (first || panel.querySelector('.close-btn')).focus({ preventScroll: true }), still ? 0 : 700);
+  }
+
+  function closeContact() {
+    const panel = app.querySelector('.contact-panel');
+    if (!panel || !state.contact) return;
+    state.contact = false;
+    panel.classList.remove('is-open');
+    panel.inert = true;
+    document.documentElement.style.overflow = '';
+    if (lenis) lenis.start();
+    if (contactReturn && document.contains(contactReturn)) contactReturn.focus({ preventScroll: true });
+    contactReturn = null;
+  }
+
   /* ---------- Page events ---------- */
 
   function setLang(lang) {
@@ -413,6 +457,14 @@
 
     const opener = e.target.closest('[data-open]');
     if (opener) { e.preventDefault(); openModal(+opener.dataset.open, opener); return; }
+
+    const contactBtn = e.target.closest('[data-action="contact-open"], [data-action="contact-close"]');
+    if (contactBtn) {
+      e.preventDefault();
+      if (contactBtn.dataset.action === 'contact-open') openContact(contactBtn);
+      else closeContact();
+      return;
+    }
 
     if (e.target.closest('[data-action="toggle-all"]')) {
       e.preventDefault();
@@ -645,6 +697,7 @@
   });
 
   document.addEventListener('keydown', e => {
+    if (state.contact && e.key === 'Escape') { closeContact(); return; }
     if (state.modal == null) return;
     if (e.key === 'Escape') closeModal();
     else if (e.key === 'ArrowRight') go(1);
