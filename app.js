@@ -33,6 +33,8 @@
   const qModal = parseInt(q.get('modal'), 10);
   // Static captures (boards.html frames, ?reveal=0) skip the loader and all entrance motion.
   const still = reducedMotion || !!frameId || q.get('reveal') === '0' || !isNaN(qModal);
+  // Ink reveal on the hero title (ink.js): desktop with a mouse only.
+  const inkOn = !still && !!window.HeroInk && window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 992px)').matches;
 
   let revealStarted = false;
   let io = null;
@@ -94,6 +96,7 @@
       lines[lines.length - 1].push(w.outerHTML);
     });
     h1.innerHTML = lines.map((l, i) => `<span class="line"><span class="line-inner" style="--i:${i}">${l.join(' ')}</span></span>`).join('');
+    if (inkOn) window.HeroInk.refresh();
   }
 
   function pageHTML() {
@@ -259,6 +262,7 @@
       Object.entries(values).forEach(([k, v]) => { if (f.elements[k]) f.elements[k].value = v; });
     }
     splitHero();
+    if (inkOn) window.HeroInk.mount(app.querySelector('.hero'));
     buildFollower();
     if (glow.cx || glow.cy) glowLoop(); // keep the glow where it was across re-renders
     syncFooter();
@@ -879,6 +883,7 @@
 
   runLoader(() => {
     app.classList.add('hero-in');
+    if (inkOn) window.HeroInk.enable(1700);
     startReveals();
   });
 

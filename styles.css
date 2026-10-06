@@ -668,6 +668,8 @@ main {
   transition-delay: calc(var(--i) * 0.09s);
 }
 .hero-in .hero-title .line-inner { transform: none; }
+/* Ink reveal canvas from ink.js, laid over the title */
+.hero-ink { position: absolute; z-index: 2; pointer-events: none; }
 .hero-fade {
   opacity: 0;
   transform: translateY(18px);
