@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const { LINKS, DICT, PROJECTS, SHOT_H, PHOTO } = window.SITE;
+  const { LINKS, DICT, PROJECTS, SHOT_H, PHOTO, MARQUEE } = window.SITE;
   // Only projects with screenshots are shown; the rest stay in content.js for later.
   const P = PROJECTS.filter(p => p.shot);
   const ANGLES = [135, 45, 90, 0, 120, 60, 150, 30, 105, 75];
@@ -150,6 +150,10 @@
     </div>
   </section>
 
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">${[0, 1].map(() => `<div class="marquee-group">${MARQUEE.map(w => `<span>${w}</span><i></i>`).join('')}</div>`).join('')}</div>
+  </div>
+
   <section id="services" class="section">
     <div class="sec-head grid" data-reveal><h2>${d.services}</h2></div>
     <div class="rows">
@@ -220,10 +224,12 @@
       </div>
       <form class="form cp-anim" style="--d:.6s" novalidate>
         ${state.sent ? `<p class="sent" role="status">${d.sent}</p>` : `
-        <label><span>${d.fName}</span><input name="name" required autocomplete="name"></label>
-        <label><span>${d.fContact}</span><input name="contact" required></label>
-        <label><span>${d.fTask}</span><textarea name="task" rows="3"></textarea></label>
-        <button type="submit">→ ${d.send}</button>`}
+        <label><span>${d.fName}</span><input name="name" required autocomplete="name" maxlength="100"></label>
+        <label><span>${d.fContact}</span><input name="contact" required maxlength="200"></label>
+        <label><span>${d.fTask}</span><textarea name="task" rows="3" maxlength="3000"></textarea></label>
+        <label class="hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+        <button type="submit">→ ${d.send}</button>
+        <p class="form-error" role="alert" hidden>${d.sendError} <a href="https://t.me/whitenovacanee" target="_blank" rel="noopener">@whitenovacanee</a></p>`}
       </form>
     </div>
   </div>
@@ -290,6 +296,11 @@
   function initLenis() {
     if (still || !window.Lenis) return;
     lenis = new window.Lenis({ autoRaf: true, lerp: 0.09, smoothWheel: true });
+    lenis.on('scroll', ({ velocity }) => {
+      const track = app.querySelector('.marquee-track');
+      const anim = track && track.getAnimations()[0];
+      if (anim) anim.playbackRate = 1 + Math.min(4, Math.abs(velocity) * 0.12);
+    });
   }
 
   const headerOffset = () => (isMobile() ? -70 : -76);
@@ -484,17 +495,39 @@
     }
   });
 
-  app.addEventListener('submit', e => {
+  app.addEventListener('submit', async e => {
     e.preventDefault();
     const form = e.target;
+    if (form.dataset.busy) return;
     if (!form.checkValidity()) {
       const bad = form.querySelector(':invalid');
       if (bad) bad.focus();
       return;
     }
-    // TODO: send the form somewhere (e.g. a Telegram bot or form service). The design only shows the thank-you state.
-    state.sent = true;
-    renderPage();
+    const d = t();
+    const btn = form.querySelector('button[type="submit"]');
+    const err = form.querySelector('.form-error');
+    form.dataset.busy = '1';
+    btn.disabled = true;
+    btn.textContent = d.sending;
+    err.hidden = true;
+    try {
+      const res = await fetch('api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...Object.fromEntries(new FormData(form)), lang: state.lang }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.ok) throw new Error(json.error || res.status);
+      state.sent = true;
+      form.reset();
+      renderPage();
+    } catch {
+      delete form.dataset.busy;
+      btn.disabled = false;
+      btn.textContent = `→ ${d.send}`;
+      err.hidden = false;
+    }
   });
 
   /* ---------- Project modal ---------- */

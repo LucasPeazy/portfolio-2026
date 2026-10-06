@@ -300,6 +300,30 @@ a:hover .roll > span, a:hover .roll::after { transform: translateY(-100%); }
 .work-more a { grid-column: 2 / span 8; justify-self: start; }
 @media (max-width: 759.98px) { .work-more a { grid-column: 1 / -1; } }
 
+/* Accent marquee (Work → Services) */
+main { overflow-x: clip; }
+.marquee {
+  margin: var(--sec-pad) -2vw 0;
+  padding: clamp(14px, 1.6vw, 24px) 0;
+  background: var(--accent);
+  color: #fff;
+  transform: rotate(-1.6deg);
+  overflow: hidden;
+}
+.marquee-track { display: flex; width: max-content; animation: marquee 32s linear infinite; }
+.marquee-group { display: flex; align-items: center; flex: none; }
+.marquee span {
+  padding: 0 clamp(18px, 2vw, 32px);
+  font-size: clamp(40px, 6vw, 96px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.marquee i { flex: none; width: 0.22em; height: 0.22em; border-radius: 50%; background: currentColor; font-size: clamp(40px, 6vw, 96px); }
+@keyframes marquee { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+
 /* Services */
 .svc-row {
   row-gap: 12px;
@@ -399,6 +423,11 @@ a:hover .roll > span, a:hover .roll::after { transform: translateY(-100%); }
   text-underline-offset: 0.2em;
 }
 .form .sent { margin: 0; font-size: 18px; line-height: 1.4; }
+.form button:disabled { color: var(--muted); cursor: default; }
+.form-error { margin: 0; font-size: 14px; color: #C3261C; }
+.form-error a { color: inherit; }
+/* Honeypot for bots, kept off-screen */
+.form .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 @media (max-width: 759.98px) {
   .contact-body { margin-top: 48px; }
   .contact-links, .form { grid-column: 1 / -1; }

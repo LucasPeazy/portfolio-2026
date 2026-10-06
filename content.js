@@ -31,6 +31,7 @@ window.SITE = (() => {
       langsLabel: 'Языки', langs: 'Русский, английский, итальянский', stackLabel: 'Стек',
       contact: 'Контакты', big: 'Давайте сделаем\nсайт.', contactNote: 'Быстрее всего отвечаю в Telegram.',
       fName: 'Имя', fContact: 'Почта или Telegram', fTask: 'Коротко о задаче', send: 'Отправить',
+      sending: 'Отправляю…', sendError: 'Не получилось отправить. Напишите мне в Telegram:',
       sent: 'Спасибо. Отвечу на почту или в Telegram.',
       footer: '© 2026 web is everything. Дмитрий Чернобровкин, веб-разработчик.', top: 'Наверх', loading: 'Загрузка', footNav: 'Разделы', footLinks: 'Связь',
       m: { desktop: 'Десктоп', mobile: 'Мобильная версия', mobileShort: 'Мобильная', services: 'Услуги', desc: 'Описание', stack: 'Стек',
@@ -60,6 +61,7 @@ window.SITE = (() => {
       langsLabel: 'Languages', langs: 'Russian, English, Italian', stackLabel: 'Stack',
       contact: 'Contact', big: "Let's build a site.", contactNote: 'Telegram is the fastest way to reach me.',
       fName: 'Name', fContact: 'Email or Telegram', fTask: 'What do you need?', send: 'Send',
+      sending: 'Sending…', sendError: "Couldn't send that. Message me on Telegram:",
       sent: "Thanks. I'll reply by email or Telegram.",
       footer: '© 2026 web is everything. Dmitrii Chernobrovkin, web developer.', top: 'Back to top', loading: 'Loading', footNav: 'Sections', footLinks: 'Elsewhere',
       m: { desktop: 'Desktop', mobile: 'Mobile version', mobileShort: 'Mobile', services: 'Services', desc: 'Description', stack: 'Stack',
@@ -127,8 +129,11 @@ window.SITE = (() => {
 
   const PHOTO = { src: 'assets/me.webp', w: 1100, h: 1467 };
 
+  // Words in the accent marquee between Work and Services.
+  const MARQUEE = ['React', 'Astro', 'Laravel', 'Shopify', 'Tailwind', 'CSS', 'SCSS', 'GSAP', 'JavaScript', 'MySQL', 'MongoDB', 'Firebase', 'Figma'];
+
   // Placeholder screenshot section heights, px (until real screenshots exist).
   const SHOT_H = { desktop: [720, 560, 640, 600, 560, 480, 520, 240], mobile: [740, 620, 880, 760, 820, 600, 640, 300] };
 
-  return { LINKS, DICT, PROJECTS, SHOT_H, PHOTO };
+  return { LINKS, DICT, PROJECTS, SHOT_H, PHOTO, MARQUEE };
 })();
