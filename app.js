@@ -230,6 +230,7 @@
     <p class="footer-mark" data-goo-footer aria-hidden="true">web is everything<span class="accent">.</span></p>
     <div class="footer-bottom">
       <span data-goo-footer>${d.footer}</span>
+      <a class="lnk" data-goo-footer href="/privacy">${roll(d.privacy)}</a>
       <a class="lnk" data-goo-footer href="#top">${roll(`↑ ${d.top}`)}</a>
     </div>
   </div>
@@ -254,6 +255,11 @@
         <label><span data-goo-panel>${d.fContact}</span><input name="contact" required maxlength="200"></label>
         <label><span data-goo-panel>${d.fTask}</span><textarea name="task" rows="3" maxlength="3000"></textarea></label>
         <label class="hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+        <label class="consent" data-goo-panel>
+          <input type="checkbox" name="consent" value="yes" required>
+          <span class="consent-box" aria-hidden="true"></span>
+          <span>${d.consent[0]} <a href="/consent" target="_blank" rel="noopener">${d.consent[1]}</a> ${d.consent[2]} <a href="/privacy" target="_blank" rel="noopener">${d.consent[3]}</a></span>
+        </label>
         <button type="submit" data-goo-panel>→ ${d.send}</button>
         <p class="form-error" role="alert" hidden>${d.sendError} <a href="https://t.me/whitenovacanee" target="_blank" rel="noopener">@whitenovacanee</a></p>`}
       </form>
@@ -281,7 +287,11 @@
 
     if (values) {
       const f = app.querySelector('form');
-      Object.entries(values).forEach(([k, v]) => { if (f.elements[k]) f.elements[k].value = v; });
+      Object.entries(values).forEach(([k, v]) => {
+        const el = f.elements[k];
+        if (!el) return;
+        if (el.type === 'checkbox') el.checked = true; else el.value = v;
+      });
     }
     splitHero();
     syncParallax();
@@ -662,6 +672,7 @@
     const form = e.target;
     if (form.dataset.busy) return;
     if (!form.checkValidity()) {
+      form.classList.add('tried');
       const bad = form.querySelector(':invalid');
       if (bad) bad.focus();
       return;

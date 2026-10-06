@@ -86,6 +86,8 @@ module.exports = async function handler(req, res) {
   const task = clean(body.task, LIMITS.task);
   const lang = body.lang === 'en' ? 'EN' : 'RU';
   if (!name || !contact) return reply(res, 400, { ok: false, error: 'fields' });
+  // Consent to personal data processing (152-FZ) is required; the message records when it was given.
+  if (body.consent !== 'yes') return reply(res, 400, { ok: false, error: 'consent' });
   // Link spam: real requests rarely carry more than a couple of links.
   if ((`${name} ${contact} ${task}`.match(/https?:\/\/|www\./gi) || []).length > 2) return silentOk(res);
 
@@ -95,6 +97,8 @@ module.exports = async function handler(req, res) {
     `Имя: ${name}`,
     `Контакт: ${contact}`,
     task ? `\nЗадача:\n${task}` : 'Задача: не указана',
+    '',
+    `Согласие на обработку ПД: получено ${new Date(now).toISOString().replace('T', ' ').slice(0, 16)} UTC`,
   ].join('\n');
 
   try {

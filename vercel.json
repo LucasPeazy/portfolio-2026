@@ -82,5 +82,6 @@
       "destination": "https://webiseverything.com/$1",
       "permanent": true
     }
-  ]
+  ],
+  "cleanUrls": true
 }
