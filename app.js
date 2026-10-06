@@ -178,7 +178,7 @@
 
   <section id="contact" class="section">
     <div class="sec-head grid" data-reveal><h2>${d.contact}</h2></div>
-    <p class="big-mail" data-reveal="rise"><span class="rise"><a href="mailto:lucas.peazy@gmail.com">${d.big}</a></span></p>
+    <p class="big-mail" data-reveal="rise"><span class="rise"><a href="mailto:lucas.peazy@gmail.com">${d.big.replace('\n', '<br>')}</a></span></p>
     <div class="contact-body grid">
       <div class="contact-links" data-reveal>
         <p>${d.contactNote}</p>
@@ -196,8 +196,27 @@
 </main>
 
 <footer class="footer">
-  <span>${d.footer}</span>
-  <a class="lnk" href="#top" style="white-space:nowrap;">${roll(`↑ ${d.top}`)}</a>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <a class="footer-cta lnk" href="https://t.me/whitenovacanee" target="_blank" rel="noopener">${roll(`→ ${d.cta}`)}</a>
+      <div class="footer-col">
+        <h2>${d.footNav}</h2>
+        <a class="lnk" href="#work">${roll(d.navWork)}</a>
+        <a class="lnk" href="#services">${roll(d.services)}</a>
+        <a class="lnk" href="#about">${roll(d.navAbout)}</a>
+        <a class="lnk" href="#contact">${roll(d.navContact)}</a>
+      </div>
+      <div class="footer-col">
+        <h2>${d.footLinks}</h2>
+        ${lk.map(l => `<a class="lnk" href="${l.href}"${l.ext}>${roll(l.label + (l.ext ? ' ↗' : ''))}</a>`).join('')}
+      </div>
+    </div>
+    <p class="footer-mark" aria-hidden="true">web is everything<span class="accent">.</span></p>
+    <div class="footer-bottom">
+      <span>${d.footer}</span>
+      <a class="lnk" href="#top">${roll(`↑ ${d.top}`)}</a>
+    </div>
+  </div>
 </footer>
 
 <a class="tg-bar" href="https://t.me/whitenovacanee" target="_blank" rel="noopener"><span>→ ${d.cta}</span><small>Telegram</small></a>`;
@@ -224,6 +243,7 @@
     }
     splitHero();
     buildFollower();
+    syncFooter();
     if (revealStarted) {
       if (animate && io) observeReveals();
       else app.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-in'));
@@ -274,6 +294,22 @@
     document.documentElement.classList.toggle('hdr-float', window.scrollY > 40);
   }
   window.addEventListener('scroll', syncHeader, { passive: true });
+
+  // The footer sits behind the page (position: sticky) and is uncovered as the page scrolls away;
+  // its content rises from below in step with how much of it is visible.
+  function syncFooter() {
+    const footer = app.querySelector('.footer');
+    const main = app.querySelector('main');
+    if (!footer || !main) return;
+    const barH = isMobile() ? 56 : 0;
+    // A footer taller than the screen can't be uncovered in full, so it scrolls normally.
+    footer.classList.toggle('is-static', footer.offsetHeight > window.innerHeight - barH);
+    const shown = window.innerHeight - barH - main.getBoundingClientRect().bottom;
+    const p = Math.max(0, Math.min(1, shown / footer.offsetHeight));
+    footer.style.setProperty('--reveal', still ? 1 : p.toFixed(3));
+  }
+  window.addEventListener('scroll', syncFooter, { passive: true });
+  window.addEventListener('resize', syncFooter);
 
   window.addEventListener('resize', (() => {
     let w = window.innerWidth, timer;
