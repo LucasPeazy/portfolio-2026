@@ -865,12 +865,44 @@ body.modal-open { overflow: hidden; }
   position: fixed;
   inset: 0;
   z-index: 50;
+  background: rgba(18, 18, 17, 0);
+  padding: 24px;
+  display: flex;
+  transition: background-color .35s ease, backdrop-filter .35s ease, -webkit-backdrop-filter .35s ease;
+}
+/* Open / close: the backdrop dims and blurs, the dialog rises with a slight zoom, then its text fades up. */
+#modal-root.is-open .md-backdrop {
   background: rgba(18, 18, 17, 0.32);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  padding: 24px;
-  display: flex;
+  transition-duration: .5s;
 }
+#modal-root:not(.is-open) > * { pointer-events: none; }
+.md {
+  opacity: 0;
+  transform: translateY(48px) scale(0.97);
+  transition: opacity .3s ease, transform .4s cubic-bezier(.6, 0, .9, .3);
+}
+#modal-root.is-open .md {
+  opacity: 1;
+  transform: none;
+  transition: opacity .45s ease, transform .8s var(--ease-out);
+}
+.md-aside-body > *, .md-bar, .md-nav {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+#modal-root.is-open .md-aside-body > *, #modal-root.is-open .md-bar, #modal-root.is-open .md-nav {
+  opacity: 1;
+  transform: none;
+  transition: opacity .6s ease var(--d, .2s), transform .8s var(--ease-out) var(--d, .2s);
+}
+.md-aside-body > :nth-child(1) { --d: .22s; }
+.md-aside-body > :nth-child(2) { --d: .3s; }
+.md-aside-body > :nth-child(3) { --d: .38s; }
+.md-bar { --d: .18s; }
+.md-nav { --d: .32s; }
 .md {
   flex: 1;
   min-width: 0;
@@ -945,7 +977,10 @@ body.modal-open { overflow: hidden; }
   background: var(--bg);
   display: flex;
   flex-direction: column;
+  transform: translateY(100%);
+  transition: transform .45s cubic-bezier(.6, 0, .9, .3);
 }
+#modal-root.is-open .mm { transform: none; transition: transform .7s var(--ease-curtain); }
 .mm-bar {
   flex: none;
   height: 56px;

@@ -820,13 +820,28 @@
     onModalScroll();
   }
 
+  // Open/close transitions run off #modal-root.is-open; re-renders while open (prev/next, language)
+  // land straight in the open state.
+  let modalCloseTimer = 0;
+
   function renderModal({ keepScroll = false, scroll = 0 } = {}) {
-    if (state.modal == null) { modalRoot.innerHTML = ''; return; }
+    if (state.modal == null) {
+      modalRoot.classList.remove('is-open');
+      clearTimeout(modalCloseTimer);
+      modalCloseTimer = setTimeout(() => { if (state.modal == null) modalRoot.innerHTML = ''; }, still ? 0 : 500);
+      return;
+    }
+    clearTimeout(modalCloseTimer);
+    const opening = !modalRoot.classList.contains('is-open');
     const old = modalRoot.querySelector('[data-scroll]');
     const prevTop = keepScroll && old ? old.scrollTop : null;
     const hadFocus = modalRoot.contains(document.activeElement) && document.activeElement.dataset.action;
 
     modalRoot.innerHTML = modalHTML();
+    if (opening) {
+      if (!still) void modalRoot.offsetWidth; // commit the closed state so the transition runs
+      modalRoot.classList.add('is-open');
+    }
     const el = modalRoot.querySelector('[data-scroll]');
     el.addEventListener('scroll', onModalScroll, { passive: true });
 
