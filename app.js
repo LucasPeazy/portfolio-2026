@@ -37,6 +37,8 @@
   const inkOn = !still && !!window.HeroInk && window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 992px)').matches;
 
   let revealStarted = false;
+  let heroShown = false; // hero text has assembled; re-rendered hero text shows at once
+  let footerShown = false; // same for the footer
   let io = null;
   let lenis = null;
   let returnFocus = null;
@@ -95,7 +97,7 @@
       if (top === null || Math.abs(w.offsetTop - top) > 4) { lines.push([]); top = w.offsetTop; }
       lines[lines.length - 1].push(w.outerHTML);
     });
-    h1.innerHTML = lines.map((l, i) => `<span class="line"><span class="line-inner" style="--i:${i}">${l.join(' ')}</span></span>`).join('');
+    h1.innerHTML = lines.map(l => `<span class="line hero-goo${heroShown ? ' goo-done' : ''}"><span class="line-inner">${l.join(' ')}</span></span>`).join('');
     if (inkOn) window.HeroInk.refresh();
   }
 
@@ -125,16 +127,16 @@
     <div class="grid">
       <h1 class="hero-title">${heroWords(d).join(' ')}</h1>
       <ul class="hero-links">
-        ${lk.map((l, i) => `<li class="hero-fade" style="--d:${0.45 + i * 0.06}s"><span>${l.label}</span><a class="lnk" href="${l.href}"${l.ext}>${roll(l.text)}</a></li>`).join('')}
+        ${lk.map(l => `<li class="hero-goo"><span>${l.label}</span><a class="lnk" href="${l.href}"${l.ext}>${roll(l.text)}</a></li>`).join('')}
       </ul>
-      <p class="intro hero-fade" style="--d:0.7s">${d.intro}</p>
+      <p class="intro hero-goo">${d.intro}</p>
     </div>
   </section>
 
   <section id="work" class="section">
-    <div class="sec-head grid" data-reveal>
-      <h2>${d.work}</h2>
-      <span class="count">${list.length} ${d.of} ${P.length}</span>
+    <div class="sec-head grid" data-reveal="line">
+      <h2 data-goo>${d.work}</h2>
+      <span class="count" data-goo>${list.length} ${d.of} ${P.length}</span>
     </div>
     <div class="rows work-list">
       ${list.map((p, i) => `
@@ -143,14 +145,14 @@
           <div class="work-thumb ph${p.shot ? ' has-img' : ''}">${p.shot
             ? `<img src="${thumbSrc(p)}" width="900" height="563" alt="" loading="lazy" decoding="async">`
             : `<span class="tag">(${pad2(i + 1)}) ${p.name}, ${d.preview}</span>`}</div>
-          <span class="num">(${pad2(i + 1)})</span>
-          <h3 class="big-title">${p[state.lang].title}</h3>
-          <span class="work-type">${p[state.lang].type}</span>
+          <span class="num" data-goo>(${pad2(i + 1)})</span>
+          <h3 class="big-title" data-goo>${p[state.lang].title}</h3>
+          <span class="work-type" data-goo>${p[state.lang].type}</span>
         </a>
       </article>`).join('')}
     </div>
     <div class="work-more grid">
-      <a class="lnk" href="#work" data-action="toggle-all" aria-expanded="${state.all}">${roll(state.all ? `← ${d.collapse}` : `→ ${d.allWorks} (${P.length})`)}</a>
+      <a class="lnk" href="#work" data-goo data-action="toggle-all" aria-expanded="${state.all}">${roll(state.all ? `← ${d.collapse}` : `→ ${d.allWorks} (${P.length})`)}</a>
     </div>
   </section>
 
@@ -159,29 +161,29 @@
   </div>
 
   <section id="services" class="section">
-    <div class="sec-head grid" data-reveal><h2>${d.services}</h2></div>
+    <div class="sec-head grid" data-reveal="line"><h2 data-goo>${d.services}</h2></div>
     <div class="rows">
       ${d.svc.map((s, i) => `
       <div class="svc-row grid" data-reveal>
-        <span class="num">(${pad2(i + 1)})</span>
-        <h3 class="big-title">${s[0]}</h3>
-        <p class="svc-incl">${s[1]}</p>
-        <span class="svc-price">${s[2]}</span>
+        <span class="num" data-goo>(${pad2(i + 1)})</span>
+        <h3 class="big-title" data-goo>${s[0]}</h3>
+        <p class="svc-incl" data-goo>${s[1]}</p>
+        <span class="svc-price" data-goo>${s[2]}</span>
       </div>`).join('')}
     </div>
-    <div class="svc-note grid"><p>${d.svcNote}</p></div>
+    <div class="svc-note grid"><p data-goo>${d.svcNote}</p></div>
   </section>
 
   <section id="about" class="section">
-    <div class="sec-head grid" data-reveal><h2>${d.about}</h2></div>
+    <div class="sec-head grid" data-reveal="line"><h2 data-goo>${d.about}</h2></div>
     <div class="about-body grid">
       <div class="photo" data-reveal="wipe"><div class="ph has-img"><img src="${PHOTO.src}" width="${PHOTO.w}" height="${PHOTO.h}" alt="${d.photoAlt}" loading="lazy" decoding="async"></div></div>
       <div class="about-text">
-        <p class="about-lead" data-reveal="rise"><span class="rise">${d.aboutLead}</span></p>
-        <p class="about-p" data-reveal>${d.aboutText}</p>
+        <p class="about-lead" data-goo>${d.aboutLead}</p>
+        <p class="about-p" data-goo>${d.aboutText}</p>
         <div class="facts" data-reveal>
-          <div><h3>${d.langsLabel}</h3><p>${d.langs}</p></div>
-          <div><h3>${d.stackLabel}</h3><p>React, Astro, Laravel, Tailwind, SCSS, GSAP, MySQL, MongoDB, Firebase, Figma</p></div>
+          <div><h3 data-goo>${d.langsLabel}</h3><p data-goo>${d.langs}</p></div>
+          <div><h3 data-goo>${d.stackLabel}</h3><p data-goo>React, Astro, Laravel, Tailwind, SCSS, GSAP, MySQL, MongoDB, Firebase, Figma</p></div>
         </div>
       </div>
     </div>
@@ -192,23 +194,23 @@
 <footer class="footer" id="contact">
   <div class="footer-inner">
     <div class="footer-top">
-      <button type="button" class="footer-cta lnk plain-btn" data-action="contact-open" aria-haspopup="dialog">${roll(`→ ${d.cta}`)}</button>
+      <button type="button" class="footer-cta lnk plain-btn" data-goo-footer data-action="contact-open" aria-haspopup="dialog">${roll(`→ ${d.cta}`)}</button>
       <div class="footer-col">
-        <h2>${d.footNav}</h2>
-        <a class="lnk" href="#work">${roll(d.navWork)}</a>
-        <a class="lnk" href="#services">${roll(d.services)}</a>
-        <a class="lnk" href="#about">${roll(d.navAbout)}</a>
-        <a class="lnk" href="#contact">${roll(d.navContact)}</a>
+        <h2 data-goo-footer>${d.footNav}</h2>
+        <a class="lnk" data-goo-footer href="#work">${roll(d.navWork)}</a>
+        <a class="lnk" data-goo-footer href="#services">${roll(d.services)}</a>
+        <a class="lnk" data-goo-footer href="#about">${roll(d.navAbout)}</a>
+        <a class="lnk" data-goo-footer href="#contact">${roll(d.navContact)}</a>
       </div>
       <div class="footer-col">
-        <h2>${d.footLinks}</h2>
-        ${lk.map(l => `<a class="lnk" href="${l.href}"${l.ext}>${roll(l.label + (l.ext ? ' ↗' : ''))}</a>`).join('')}
+        <h2 data-goo-footer>${d.footLinks}</h2>
+        ${lk.map(l => `<a class="lnk" data-goo-footer href="${l.href}"${l.ext}>${roll(l.label + (l.ext ? ' ↗' : ''))}</a>`).join('')}
       </div>
     </div>
-    <p class="footer-mark" aria-hidden="true">web is everything<span class="accent">.</span></p>
+    <p class="footer-mark" data-goo-footer aria-hidden="true">web is everything<span class="accent">.</span></p>
     <div class="footer-bottom">
-      <span>${d.footer}</span>
-      <a class="lnk" href="#top">${roll(`↑ ${d.top}`)}</a>
+      <span data-goo-footer>${d.footer}</span>
+      <a class="lnk" data-goo-footer href="#top">${roll(`↑ ${d.top}`)}</a>
     </div>
   </div>
 </footer>
@@ -220,19 +222,19 @@
       <span class="muted">(${d.contact})</span>
       <button type="button" class="plain-btn close-btn" data-action="contact-close" aria-label="${d.m.close}">×</button>
     </div>
-    <h2 class="big-mail cp-anim" id="cp-title" style="--d:.35s">${d.big.replace('\n', '<br>')}</h2>
+    <h2 class="big-mail cp-anim" data-goo-panel id="cp-title" style="--d:.35s">${d.big.replace('\n', '<br>')}</h2>
     <div class="contact-body grid">
       <div class="contact-links cp-anim" style="--d:.5s">
-        <p>${d.contactNote}</p>
-        ${lk.map(l => `<div class="contact-link"><span>${l.label}</span><a class="lnk" href="${l.href}"${l.ext}>${roll(l.text)}</a></div>`).join('')}
+        <p data-goo-panel>${d.contactNote}</p>
+        ${lk.map(l => `<div class="contact-link" data-goo-panel><span>${l.label}</span><a class="lnk" href="${l.href}"${l.ext}>${roll(l.text)}</a></div>`).join('')}
       </div>
       <form class="form cp-anim" style="--d:.6s" novalidate>
         ${state.sent ? `<p class="sent" role="status">${d.sent}</p>` : `
-        <label><span>${d.fName}</span><input name="name" required autocomplete="name" maxlength="100"></label>
-        <label><span>${d.fContact}</span><input name="contact" required maxlength="200"></label>
-        <label><span>${d.fTask}</span><textarea name="task" rows="3" maxlength="3000"></textarea></label>
+        <label><span data-goo-panel>${d.fName}</span><input name="name" required autocomplete="name" maxlength="100"></label>
+        <label><span data-goo-panel>${d.fContact}</span><input name="contact" required maxlength="200"></label>
+        <label><span data-goo-panel>${d.fTask}</span><textarea name="task" rows="3" maxlength="3000"></textarea></label>
         <label class="hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
-        <button type="submit">→ ${d.send}</button>
+        <button type="submit" data-goo-panel>→ ${d.send}</button>
         <p class="form-error" role="alert" hidden>${d.sendError} <a href="https://t.me/whitenovacanee" target="_blank" rel="noopener">@whitenovacanee</a></p>`}
       </form>
     </div>
@@ -265,10 +267,82 @@
     if (inkOn) window.HeroInk.mount(app.querySelector('.hero'));
     buildFollower();
     syncFooter();
+    if (heroShown) app.querySelectorAll('.hero-goo').forEach(el => el.classList.add('goo-done'));
+    if (footerShown) app.querySelectorAll('[data-goo-footer]').forEach(el => el.classList.add('goo-done'));
     if (revealStarted) {
-      if (animate && io) observeReveals();
-      else app.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-in'));
+      if (animate && io) { observeReveals(); observeGoo(); }
+      else {
+        app.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-in'));
+        app.querySelectorAll('[data-goo]').forEach(el => el.classList.add('goo-done'));
+      }
     }
+  }
+
+  /* ---------- "Water" text: assembles from liquid blobs ---------- */
+
+  // Each text block gets its own SVG filter: a strong blur turns letters into blobs, and an alpha
+  // contrast matrix (alpha * 20 - 8) gives the blobs hard, liquid edges. Easing the blur to zero pulls
+  // the blobs together into letters; the matrix then relaxes to normal and the filter is removed.
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  let gooSvg = null, gooN = 0;
+  const gooMatrix = (amp, off) => `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${amp.toFixed(3)} ${off.toFixed(3)}`;
+
+  function goo(el, delay = 0) {
+    el.classList.add('goo-done');
+    if (still) return;
+    if (!gooSvg) {
+      gooSvg = document.createElementNS(SVGNS, 'svg');
+      gooSvg.setAttribute('aria-hidden', 'true');
+      gooSvg.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+      document.body.appendChild(gooSvg);
+    }
+    const fs = parseFloat(getComputedStyle(el).fontSize) || 16;
+    const blur0 = Math.max(6, Math.min(48, fs * 0.5));
+    const dur = 900 + Math.min(700, fs * 6);
+    const rise = Math.min(24, fs * 0.3);
+    // Filter region big enough for the blur to spread without being clipped.
+    const px = Math.min(2, (3 * blur0) / Math.max(1, el.offsetWidth));
+    const py = (3 * blur0) / Math.max(1, el.offsetHeight);
+    const id = `goo${++gooN}`;
+    const f = document.createElementNS(SVGNS, 'filter');
+    f.setAttribute('id', id);
+    f.setAttribute('x', -px); f.setAttribute('y', -py);
+    f.setAttribute('width', 1 + 2 * px); f.setAttribute('height', 1 + 2 * py);
+    f.setAttribute('color-interpolation-filters', 'sRGB');
+    f.innerHTML = `<feGaussianBlur in="SourceGraphic" stdDeviation="${blur0}"/><feColorMatrix type="matrix" values="${gooMatrix(20, -8)}"/>`;
+    gooSvg.appendChild(f);
+    const blur = f.firstChild, mat = f.lastChild;
+    el.style.filter = `url(#${id})`;
+    el.style.transform = `translateY(${rise}px)`;
+    const t0 = performance.now() + delay;
+    const tick = now => {
+      const p = Math.min(1, Math.max(0, (now - t0) / dur));
+      const e = 1 - Math.pow(1 - p, 3);
+      blur.setAttribute('stdDeviation', (blur0 * (1 - e)).toFixed(2));
+      const q = Math.min(1, Math.max(0, (p - 0.6) / 0.4));
+      mat.setAttribute('values', gooMatrix(20 - 19 * q, -8 * (1 - q)));
+      el.style.transform = p < 1 ? `translateY(${(rise * (1 - e)).toFixed(2)}px)` : '';
+      if (p < 1) requestAnimationFrame(tick);
+      else { el.style.filter = ''; f.remove(); }
+    };
+    requestAnimationFrame(tick);
+  }
+
+  let gooIO = null;
+
+  function observeGoo() {
+    if (!gooIO) return;
+    app.querySelectorAll('[data-goo]:not(.goo-done)').forEach(el => gooIO.observe(el));
+  }
+
+  // Hero: title lines one after another, then the contacts and the intro.
+  function revealHero() {
+    heroShown = true;
+    // Starts as the loader curtain finishes lifting.
+    const at = 300;
+    app.querySelectorAll('.hero-title .hero-goo').forEach((el, i) => goo(el, at + i * 110));
+    app.querySelectorAll('.hero-links .hero-goo').forEach((el, i) => goo(el, at + 380 + i * 60));
+    app.querySelectorAll('.intro.hero-goo').forEach(el => goo(el, at + 650));
   }
 
   /* ---------- Scroll reveals ---------- */
@@ -281,8 +355,18 @@
     revealStarted = true;
     if (still || !('IntersectionObserver' in window)) {
       app.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-in'));
+      app.querySelectorAll('[data-goo]').forEach(el => el.classList.add('goo-done'));
       return;
     }
+    gooIO = new IntersectionObserver(entries => {
+      let k = 0;
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        gooIO.unobserve(en.target);
+        goo(en.target, k++ * 70);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -4% 0px' });
+    observeGoo();
     io = new IntersectionObserver(entries => {
       // Blocks entering together come in one after another.
       let k = 0;
@@ -339,6 +423,11 @@
     const shown = window.innerHeight - barH - main.getBoundingClientRect().bottom;
     const p = Math.max(0, Math.min(1, shown / footer.offsetHeight));
     footer.style.setProperty('--reveal', still ? 1 : p.toFixed(3));
+    // The footer is "in view" the whole time behind the page, so its text assembles once it is uncovered.
+    if (!footerShown && revealStarted && p > 0.2) {
+      footerShown = true;
+      footer.querySelectorAll('[data-goo-footer]').forEach((el, i) => goo(el, i * 45));
+    }
   }
   window.addEventListener('scroll', syncFooter, { passive: true });
   window.addEventListener('resize', syncFooter);
@@ -434,6 +523,7 @@
     panel.classList.add('is-open');
     document.documentElement.style.overflow = 'hidden';
     if (lenis) lenis.stop();
+    panel.querySelectorAll('[data-goo-panel]').forEach((el, i) => goo(el, 380 + i * 55));
     const first = panel.querySelector('input');
     setTimeout(() => (first || panel.querySelector('.close-btn')).focus({ preventScroll: true }), still ? 0 : 700);
   }
@@ -846,7 +936,8 @@
 
   runLoader(() => {
     app.classList.add('hero-in');
-    if (inkOn) window.HeroInk.enable(1700);
+    revealHero();
+    if (inkOn) window.HeroInk.enable(2700);
     startReveals();
   });
 
