@@ -1,11 +1,11 @@
-// Ink reveal over the hero title (desktop, WebGL2). The cursor drops "ink" into a small fluid field;
+// Ink reveal over the hero section (desktop, WebGL2). The cursor drops "ink" into a small fluid field;
 // each frame the ink drifts with its velocity, bleeds into its neighbours along a noisy warp and
-// fades. A final pass draws an inverted copy of the title (light text on blue) wherever the ink is
+// fades. A final pass draws an inverted copy of the hero text (light on blue) wherever the ink is
 // dense enough, with a crisp but ragged edge. Remove this file and its two hooks in app.js to drop it.
 window.HeroInk = (() => {
   'use strict';
 
-  const PAD = 56;                 // px of canvas around the title, so ink can spill past the letters
+  const SPILL = 140;              // px the canvas extends below the hero, so ink can run past it
   const BRUSH = 38;               // px, splat radius
   const EDGE = [0.32, 0.335];       // ink density range that becomes the visible edge
   const IDLE_STOP = 7000;         // ms after the last move before the loop sleeps
@@ -62,12 +62,14 @@ window.HeroInk = (() => {
   in vec2 vUv; out vec4 o;
   uniform sampler2D uField, uText;
   uniform vec3 uBg;
-  uniform vec2 uEdge, uGrain;
+  uniform vec2 uEdge, uGrain, uEdgeFade;
   uniform float uTime;
   ${NOISE}
   void main() {
     float d = texture(uField, vUv).r;
     float n = noise(vUv * uGrain + uTime * 0.15) - 0.5;
+    vec2 e = min(vUv, 1.0 - vUv) * uEdgeFade;
+    d *= smoothstep(0.0, 1.0, min(e.x, e.y) + n * 0.6);
     float a = smoothstep(uEdge.x, uEdge.y, d + n * 0.05);
     vec4 tx = texture(uText, vUv);
     o = vec4(mix(uBg, tx.rgb, tx.a), a);
@@ -76,7 +78,7 @@ window.HeroInk = (() => {
   const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255);
 
   let gl, canvas, textCanvas, progs, quad, fields, textTex;
-  let hero, title, cssW = 0, cssH = 0, dpr = 1, simW = 0, simH = 0;
+  let hero, cssW = 0, cssH = 0, dpr = 1, simW = 0, simH = 0;
   let raf = 0, lastMove = 0, lastFrame = 0, dirtyText = true, readyAt = Infinity;
   const pointer = { x: 0, y: 0, px: 0, py: 0, moved: false, inside: false };
 
@@ -141,13 +143,11 @@ window.HeroInk = (() => {
     return true;
   }
 
-  // Fits the canvas around the title and (re)creates the fluid field at about a third of its size.
+  // Covers the whole hero section and (re)creates the fluid field at about a third of its size.
   function layout() {
-    const hr = hero.getBoundingClientRect();
-    const tr = title.getBoundingClientRect();
-    const w = Math.round(tr.width + PAD * 2), h = Math.round(tr.height + PAD * 2);
-    canvas.style.left = `${tr.left - hr.left - PAD}px`;
-    canvas.style.top = `${tr.top - hr.top - PAD}px`;
+    const w = hero.clientWidth, h = hero.offsetHeight + SPILL;
+    canvas.style.left = '0px';
+    canvas.style.top = '0px';
     canvas.style.width = `${w}px`;
     canvas.style.height = `${h}px`;
     if (w === cssW && h === cssH && fields) return;
@@ -162,7 +162,8 @@ window.HeroInk = (() => {
     dirtyText = true;
   }
 
-  // Draws the inverted title into a 2D canvas, word by word at the exact DOM positions.
+  // Draws an inverted copy of every text in the hero into a 2D canvas, word by word at the exact
+  // DOM positions, with each element's own font. Link underlines are redrawn too.
   function drawText() {
     const cr = canvas.getBoundingClientRect();
     textCanvas.width = canvas.width;
@@ -170,21 +171,35 @@ window.HeroInk = (() => {
     const ctx = textCanvas.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, cssW, cssH);
-    const cs = getComputedStyle(title);
-    ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-    if ('letterSpacing' in ctx) ctx.letterSpacing = cs.letterSpacing;
     ctx.textBaseline = 'alphabetic';
-    const walker = document.createTreeWalker(title, NodeFilter.SHOW_TEXT);
     const range = document.createRange();
+    const walker = document.createTreeWalker(hero, NodeFilter.SHOW_TEXT);
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const el = node.parentElement;
       const text = node.textContent;
-      if (!text.trim()) continue;
-      range.selectNodeContents(node);
-      const r = range.getBoundingClientRect();
-      const m = ctx.measureText(text);
-      ctx.fillStyle = node.parentElement.closest('.accent') ? COLORS.accent : COLORS.text;
-      ctx.fillText(text, r.left - cr.left, r.top - cr.top + m.fontBoundingBoxAscent);
+      if (!text.trim() || el.closest('[aria-hidden="true"]')) continue;
+      const cs = getComputedStyle(el);
+      if (cs.visibility === 'hidden' || cs.opacity === '0') continue;
+      ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      if ('letterSpacing' in ctx) ctx.letterSpacing = cs.letterSpacing === 'normal' ? '0px' : cs.letterSpacing;
+      const muted = cs.color === 'rgb(110, 110, 106)';
+      ctx.fillStyle = el.closest('.accent') ? COLORS.accent : COLORS.text;
+      ctx.globalAlpha = muted ? 0.7 : 1;
+      for (const m of text.matchAll(/\S+/g)) {
+        range.setStart(node, m.index);
+        range.setEnd(node, m.index + m[0].length);
+        const r = range.getBoundingClientRect();
+        if (!r.width) continue;
+        ctx.fillText(m[0], r.left - cr.left, r.top - cr.top + ctx.measureText(m[0]).fontBoundingBoxAscent);
+      }
     }
+    ctx.globalAlpha = 0.85;
+    ctx.fillStyle = COLORS.text;
+    hero.querySelectorAll('.lnk').forEach(a => {
+      const r = a.getBoundingClientRect();
+      ctx.fillRect(r.left - cr.left, r.bottom - cr.top - 1, r.width, 1);
+    });
+    ctx.globalAlpha = 1;
     gl.bindTexture(gl.TEXTURE_2D, textTex);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textCanvas);
@@ -249,6 +264,7 @@ window.HeroInk = (() => {
       gl.uniform3fv(u.uBg, hex(COLORS.bg));
       gl.uniform2f(u.uEdge, EDGE[0], EDGE[1]);
       gl.uniform2f(u.uGrain, cssW / 9, cssH / 9);
+      gl.uniform2f(u.uEdgeFade, cssW / 60, cssH / 90); // ink thins out ~60px from the sides, ~90px from top/bottom
       gl.uniform1f(u.uTime, now / 1000);
     });
 
@@ -276,8 +292,6 @@ window.HeroInk = (() => {
       if (!heroEl) return;
       if (!gl && !init()) { this.mount = () => {}; return; }
       hero = heroEl;
-      title = hero.querySelector('.hero-title');
-      if (!title) return;
       hero.appendChild(canvas);
       layout();
       fields.forEach(f => { gl.bindFramebuffer(gl.FRAMEBUFFER, f.fbo); gl.clear(gl.COLOR_BUFFER_BIT); });
