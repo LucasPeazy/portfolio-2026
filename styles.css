@@ -360,10 +360,40 @@ main { overflow-x: clip; }
 
 /* Services */
 .svc-row {
+  position: relative;
+  isolation: isolate;
   row-gap: 12px;
   align-items: baseline;
   padding: var(--row-pad) 0;
   border-bottom: 1px solid var(--line);
+  color: inherit;
+  text-decoration: none;
+}
+/* Hover: a full-bleed blue fill rises from the bottom, the title nudges right, the price rolls into a CTA. */
+.svc-row::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -1px calc(var(--pad) * -1) 0;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform .6s var(--ease-curtain);
+}
+.svc-row .big-title { transition: transform .6s var(--ease-out), color .3s ease; }
+.svc-row .num, .svc-incl { transition: color .3s ease; }
+.svc-price { display: inline-grid; overflow: hidden; vertical-align: bottom; }
+.svc-price > span { grid-area: 1 / 1; text-align: right; transition: transform .55s var(--ease-roll); }
+.svc-price > span + span { transform: translateY(110%); }
+.svc-row:focus-visible { outline: none; }
+@media (hover: hover) {
+  .svc-row:hover, .svc-row:focus-visible { color: #fff; }
+  .svc-row:hover::before, .svc-row:focus-visible::before { transform: scaleY(1); }
+  .svc-row:hover .big-title, .svc-row:focus-visible .big-title { transform: translateX(28px); }
+  .svc-row:hover .num, .svc-row:focus-visible .num,
+  .svc-row:hover .svc-incl, .svc-row:focus-visible .svc-incl { color: rgba(255, 255, 255, 0.82); }
+  .svc-row:hover .svc-price > span, .svc-row:focus-visible .svc-price > span { transform: translateY(-110%); }
+  .svc-row:hover .svc-price > span + span, .svc-row:focus-visible .svc-price > span + span { transform: none; }
 }
 .svc-row .num { grid-column: 1 / span 1; grid-row: 1; }
 .svc-row .big-title { grid-column: 2 / span 6; grid-row: 1; }

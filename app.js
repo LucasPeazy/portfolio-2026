@@ -164,12 +164,12 @@
     <div class="sec-head grid" data-reveal="line"><h2 data-goo>${d.services}</h2></div>
     <div class="rows">
       ${d.svc.map((s, i) => `
-      <div class="svc-row grid" data-reveal>
+      <a class="svc-row grid" href="#contact" data-action="contact-open" data-service="${esc(s[0])}" data-reveal>
         <span class="num" data-goo>(${pad2(i + 1)})</span>
         <h3 class="big-title" data-goo>${s[0]}</h3>
         <p class="svc-incl" data-goo>${s[1]}</p>
-        <span class="svc-price" data-goo>${s[2]}</span>
-      </div>`).join('')}
+        <span class="svc-price" data-goo><span>${s[2]}</span><span aria-hidden="true">→ ${d.svcCta}</span></span>
+      </a>`).join('')}
     </div>
     <div class="svc-note grid"><p data-goo>${d.svcNote}</p></div>
   </section>
@@ -573,6 +573,12 @@
     const panel = app.querySelector('.contact-panel');
     if (!panel || state.contact) return;
     contactReturn = opener || document.activeElement;
+    const service = opener && opener.dataset.service;
+    const task = panel.querySelector('textarea[name="task"]');
+    if (service && task && (!task.value.trim() || task.dataset.prefilled === task.value)) {
+      task.value = `${t().interest} ${service}\n`;
+      task.dataset.prefilled = task.value;
+    }
     clearHover(app.querySelector('.work-list'));
     state.contact = true;
     formOpenedAt = Date.now();

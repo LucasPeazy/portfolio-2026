@@ -20,6 +20,7 @@ window.SITE = (() => {
       work: 'Работы', of: 'из', allWorks: 'Все работы', collapse: 'Свернуть', preview: 'превью',
       services: 'Услуги',
       svcNote: 'Цена зависит от объёма. Точную назову после короткого созвона.',
+    svcCta: 'Обсудить проект', interest: 'Интересует:',
       svc: [
         ['Лендинг', 'Одна страница под рекламу или запуск продукта. Дизайн, адаптивная вёрстка, форма заявки, аналитика.', 'от 30 000 ₽'],
         ['Сайт компании', 'До 10 страниц: услуги, кейсы, команда, контакты. Админка, чтобы править тексты самому, базовое SEO.', 'от 60 000 ₽'],
@@ -60,6 +61,7 @@ window.SITE = (() => {
       work: 'Work', of: 'of', allWorks: 'All work', collapse: 'Show less', preview: 'preview',
       services: 'Services',
       svcNote: "The final price depends on scope. I'll give an exact quote after a short call.",
+    svcCta: "Let's talk", interest: 'Interested in:',
       svc: [
         ['Landing page', 'One page for ads or a product launch. Design, responsive build, lead form, analytics.', 'from $350'],
         ['Company website', 'Up to 10 pages: services, case studies, team, contacts. An admin to edit copy yourself, basic SEO.', 'from $700'],
