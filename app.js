@@ -1,10 +1,12 @@
 (() => {
   'use strict';
 
-  const { LINKS, DICT, PROJECTS: P, SHOT_H } = window.SITE;
+  const { LINKS, DICT, PROJECTS: P, SHOT_H, PHOTO } = window.SITE;
   const ANGLES = [135, 45, 90, 0, 120, 60, 150, 30, 105, 75];
   const SHOWN = 6;
   const pad2 = n => String(n).padStart(2, '0');
+  const shotSrc = p => `assets/works/${p.slug}.webp`;
+  const thumbSrc = p => `assets/works/${p.slug}-thumb.webp`;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
   const mobileQ = window.matchMedia('(max-width: 759.98px)');
@@ -132,7 +134,9 @@
       ${list.map((p, i) => `
       <article class="work-row" data-i="${i}" data-reveal>
         <a class="work-link grid" href="#work/${p.slug}" data-open="${i}">
-          <div class="work-thumb ph"><span class="tag">(${pad2(i + 1)}) ${p.name}, ${d.preview}</span></div>
+          <div class="work-thumb ph${p.shot ? ' has-img' : ''}">${p.shot
+            ? `<img src="${thumbSrc(p)}" width="900" height="563" alt="" loading="lazy" decoding="async">`
+            : `<span class="tag">(${pad2(i + 1)}) ${p.name}, ${d.preview}</span>`}</div>
           <span class="num">(${pad2(i + 1)})</span>
           <h3 class="big-title">${p[state.lang].title}</h3>
           <span class="work-type">${p[state.lang].type}</span>
@@ -161,7 +165,7 @@
   <section id="about" class="section">
     <div class="sec-head grid" data-reveal><h2>${d.about}</h2></div>
     <div class="about-body grid">
-      <div class="photo" data-reveal="wipe"><div class="ph"><span class="tag">${d.photo}</span></div></div>
+      <div class="photo" data-reveal="wipe"><div class="ph has-img"><img src="${PHOTO.src}" width="${PHOTO.w}" height="${PHOTO.h}" alt="${d.photoAlt}" loading="lazy" decoding="async"></div></div>
       <div class="about-text">
         <p class="about-lead" data-reveal="rise"><span class="rise">${d.aboutLead}</span></p>
         <p class="about-p" data-reveal>${d.aboutText}</p>
@@ -291,7 +295,10 @@
     row.classList.add('is-hover');
     list.classList.add('has-hover');
     prev.style.top = Math.max(-60, row.offsetTop + row.offsetHeight / 2 - 150) + 'px';
-    prev.style.backgroundImage = `repeating-linear-gradient(${ANGLES[i % ANGLES.length]}deg, rgba(18,18,17,0.08) 0px, rgba(18,18,17,0.08) 1px, transparent 1px, transparent 9px)`;
+    prev.classList.toggle('has-img', !!p.shot);
+    prev.style.backgroundImage = p.shot
+      ? `url("${thumbSrc(p)}")`
+      : `repeating-linear-gradient(${ANGLES[i % ANGLES.length]}deg, rgba(18,18,17,0.08) 0px, rgba(18,18,17,0.08) 1px, transparent 1px, transparent 9px)`;
     prev.querySelector('.tag').textContent = `(${pad2(i + 1)}) ${p.name}, ${t().preview}`;
   }
 
@@ -374,6 +381,9 @@
 
   function shotBlocksHTML(p) {
     const d = t();
+    if (p.shot) {
+      return `<img class="shot-img" src="${shotSrc(p)}" width="${p.shot[0]}" height="${p.shot[1]}" alt="${esc(p[state.lang].title)}" decoding="async">`;
+    }
     const shot = currentShot();
     const scale = isMobile() && shot === 'desktop' ? 0.3 : 1;
     return d.shotLabels.map((lab, i) => `
@@ -383,7 +393,9 @@
       </div>`).join('');
   }
 
+  // Real screenshots exist only for desktop, so the switch is shown for placeholder projects only.
   function shotToggle(mobileLabel) {
+    if (P[state.modal].shot) return '<span></span>';
     const tm = t().m;
     const shot = currentShot();
     return `<div class="shot-toggle">
@@ -412,7 +424,7 @@
     const openLink = `<a class="open-link" href="${esc(p.url)}" target="_blank" rel="noopener">→ ${tm[p.link]}</a>`;
 
     if (!isMobile()) {
-      const mobileShot = currentShot() === 'mobile';
+      const mobileShot = !p.shot && currentShot() === 'mobile';
       return `
 <div class="md-backdrop" data-action="close">
   <div class="md" role="dialog" aria-modal="true" aria-labelledby="pm-title">

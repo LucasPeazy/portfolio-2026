@@ -3,3 +3,6 @@
 *.log
 .vercel
 .env*
+
+# Original images; the site uses compressed copies in assets/
+photos/
