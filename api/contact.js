@@ -9,7 +9,7 @@
 const LIMITS = { name: 100, contact: 200, task: 3000 };
 const MAX_BODY = 10 * 1024; // bytes
 const MIN_FILL_MS = 2500;
-const ALLOWED_ORIGIN = /^https:\/\/(web-is-everything|portfolio-2026(-[a-z0-9-]+)?)\.vercel\.app$|^http:\/\/localhost(:\d+)?$/;
+const ALLOWED_ORIGIN = /^https:\/\/(www\.)?webiseverything\.com$|^https:\/\/(web-is-everything|portfolio-2026(-[a-z0-9-]+)?)\.vercel\.app$|^http:\/\/localhost(:\d+)?$/;
 
 // Best-effort limits kept in memory per warm instance.
 const RATE = { perIp: 3, ipWindowMs: 10 * 60 * 1000, global: 30, globalWindowMs: 60 * 60 * 1000 };

@@ -36,5 +36,51 @@
       "source": "/favicon.ico",
       "destination": "/favicon.svg"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.webiseverything.com"
+        }
+      ],
+      "destination": "https://webiseverything.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "web-is-everything.vercel.app"
+        }
+      ],
+      "destination": "https://webiseverything.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "portfolio-2026-theta-three-92.vercel.app"
+        }
+      ],
+      "destination": "https://webiseverything.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "portfolio-2026-lucaspeazys-projects.vercel.app"
+        }
+      ],
+      "destination": "https://webiseverything.com/:path*",
+      "permanent": true
+    }
   ]
 }
