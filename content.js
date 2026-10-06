@@ -1,11 +1,12 @@
 // Site content: contacts, translations and projects. Edit texts here.
 window.SITE = (() => {
+  // `text` picks the visible link label from DICT.<lang>.link, so raw URLs are never shown.
   const LINKS = [
-    { key: 'mail', href: 'mailto:lucas.peazy@gmail.com', short: 'lucas.peazy@gmail.com', full: 'lucas.peazy@gmail.com', ext: false },
-    { key: 'Telegram', href: 'https://t.me/whitenovacanee', short: '@whitenovacanee', full: '@whitenovacanee', ext: true },
-    { key: 'Kwork', href: 'https://kwork.ru/user/webiseverything', short: 'profile', full: '→ kwork.ru/user/webiseverything', ext: true },
-    { key: 'Fiverr', href: 'https://www.fiverr.com/s/2ppKW0X', short: 'profile', full: '→ fiverr.com/s/2ppKW0X', ext: true },
-    { key: 'LinkedIn', href: 'https://www.linkedin.com/in/dmitrii-chernobrovkin-850801439/', short: 'profile', full: '→ Dmitrii Chernobrovkin', ext: true },
+    { key: 'mail', href: 'mailto:lucas.peazy@gmail.com', text: 'write', ext: false },
+    { key: 'Telegram', href: 'https://t.me/whitenovacanee', text: 'message', ext: true },
+    { key: 'Kwork', href: 'https://kwork.ru/user/webiseverything', text: 'profile', ext: true },
+    { key: 'Fiverr', href: 'https://www.fiverr.com/s/2ppKW0X', text: 'profile', ext: true },
+    { key: 'LinkedIn', href: 'https://www.linkedin.com/in/dmitrii-chernobrovkin-850801439/', text: 'profile', ext: true },
   ];
 
   const DICT = {
@@ -15,7 +16,7 @@ window.SITE = (() => {
       navWork: 'Работы', navAbout: 'Обо мне', navContact: 'Контакты', cta: 'Написать мне',
       h1a: 'Веб-разработчик, который делает сайты целиком: от ', h1b: 'дизайна', h1c: ' до ', h1d: 'запуска', h1e: '.',
       intro: 'Меня зовут Дмитрий. Пять лет делаю сайты для клиентов из разных стран. Беру задачу с нуля или по готовому макету и довожу до работающего сайта на домене.',
-      mail: 'Почта', profile: '→ Профиль',
+      mail: 'Почта', link: { write: 'Написать', message: 'Написать', profile: 'Профиль' },
       work: 'Работы', of: 'из', allWorks: 'Все работы', collapse: 'Свернуть', preview: 'превью',
       services: 'Услуги',
       svcNote: 'Цена зависит от объёма. Точную назову после короткого созвона.',
@@ -31,7 +32,7 @@ window.SITE = (() => {
       contact: 'Контакты', big: 'Давайте сделаем сайт.', contactNote: 'Быстрее всего отвечаю в Telegram.',
       fName: 'Имя', fContact: 'Почта или Telegram', fTask: 'Коротко о задаче', send: 'Отправить',
       sent: 'Спасибо. Отвечу на почту или в Telegram.',
-      footer: '© 2026 web is everything. Дмитрий Чернобровкин, веб-разработчик.', top: 'Наверх',
+      footer: '© 2026 web is everything. Дмитрий Чернобровкин, веб-разработчик.', top: 'Наверх', loading: 'Загрузка',
       m: { desktop: 'Десктоп', mobile: 'Мобильная версия', mobileShort: 'Мобильная', services: 'Услуги', desc: 'Описание', stack: 'Стек',
         site: 'Открыть сайт', demo: 'Открыть демо', design: 'Смотреть макет',
         prev: 'Предыдущий проект', next: 'Следующий проект', prevS: 'Назад', nextS: 'Далее',
@@ -44,7 +45,7 @@ window.SITE = (() => {
       navWork: 'Work', navAbout: 'About', navContact: 'Contact', cta: 'Get in touch',
       h1a: 'A web developer who builds whole websites: from ', h1b: 'design', h1c: ' to ', h1d: 'launch', h1e: '.',
       intro: "I'm Dmitrii. For five years I've been building websites for clients in different countries. I start from scratch or from your design files and take it all the way to a live site on your domain.",
-      mail: 'Email', profile: '→ Profile',
+      mail: 'Email', link: { write: 'Email me', message: 'Message', profile: 'Profile' },
       work: 'Work', of: 'of', allWorks: 'All work', collapse: 'Show less', preview: 'preview',
       services: 'Services',
       svcNote: "The final price depends on scope. I'll give an exact quote after a short call.",
@@ -60,7 +61,7 @@ window.SITE = (() => {
       contact: 'Contact', big: "Let's build a site.", contactNote: 'Telegram is the fastest way to reach me.',
       fName: 'Name', fContact: 'Email or Telegram', fTask: 'What do you need?', send: 'Send',
       sent: "Thanks. I'll reply by email or Telegram.",
-      footer: '© 2026 web is everything. Dmitrii Chernobrovkin, web developer.', top: 'Back to top',
+      footer: '© 2026 web is everything. Dmitrii Chernobrovkin, web developer.', top: 'Back to top', loading: 'Loading',
       m: { desktop: 'Desktop', mobile: 'Mobile version', mobileShort: 'Mobile', services: 'Services', desc: 'Description', stack: 'Stack',
         site: 'Visit site', demo: 'Open demo', design: 'View design',
         prev: 'Previous project', next: 'Next project', prevS: 'Previous', nextS: 'Next',
