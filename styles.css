@@ -202,6 +202,7 @@ a:hover .roll > span, a:hover .roll::after { transform: translateY(-100%); }
   border-radius: 50%;
   background: radial-gradient(circle at 50% 50%, rgba(3, 57, 248, 0.22), rgba(3, 57, 248, 0.08) 38%, transparent 68%);
   filter: blur(30px);
+  translate: var(--gx, 0px) var(--gy, 0px); /* cursor offset from app.js; composes with the drift animation */
   opacity: 0;
   transition: opacity 2.4s ease .3s;
 }

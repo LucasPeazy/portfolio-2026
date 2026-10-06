@@ -260,6 +260,7 @@
     }
     splitHero();
     buildFollower();
+    if (glow.cx || glow.cy) glowLoop(); // keep the glow where it was across re-renders
     syncFooter();
     if (revealStarted) {
       if (animate && io) observeReveals();
@@ -346,6 +347,42 @@
       timer = setTimeout(() => { if (window.innerWidth !== w) { w = window.innerWidth; splitHero(); } }, 150);
     };
   })());
+
+  /* ---------- Hero glow follows the cursor (desktop) ---------- */
+
+  const glow = { x: 0, y: 0, cx: 0, cy: 0, raf: 0 };
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+  function glowLoop() {
+    const el = app.querySelector('.hero-glow');
+    if (!el) { glow.raf = 0; return; }
+    glow.cx += (glow.x - glow.cx) * 0.06;
+    glow.cy += (glow.y - glow.cy) * 0.06;
+    el.style.setProperty('--gx', `${glow.cx.toFixed(1)}px`);
+    el.style.setProperty('--gy', `${glow.cy.toFixed(1)}px`);
+    const settled = Math.abs(glow.x - glow.cx) < 0.5 && Math.abs(glow.y - glow.cy) < 0.5;
+    glow.raf = settled ? 0 : requestAnimationFrame(glowLoop);
+  }
+
+  function aimGlow(x, y) {
+    glow.x = x;
+    glow.y = y;
+    if (!glow.raf) glow.raf = requestAnimationFrame(glowLoop);
+  }
+
+  app.addEventListener('mousemove', e => {
+    if (still || !canHover.matches) return;
+    const hero = e.target.closest('.hero');
+    const el = hero && hero.querySelector('.hero-glow');
+    if (!el) return;
+    // Offset from the glow's resting centre to the pointer (the current offset is already applied to the rect).
+    const r = el.getBoundingClientRect();
+    aimGlow(e.clientX - (r.left + r.width / 2 - glow.cx), e.clientY - (r.top + r.height / 2 - glow.cy));
+  });
+  app.addEventListener('mouseout', e => {
+    const hero = e.target.closest('.hero');
+    if (hero && !hero.contains(e.relatedTarget)) aimGlow(0, 0); // drift back to its spot
+  });
 
   /* ---------- Hover preview (desktop): follows the cursor over the work list ---------- */
 

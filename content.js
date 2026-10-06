@@ -11,7 +11,7 @@ window.SITE = (() => {
 
   const DICT = {
     ru: {
-      title: 'web is everything — Дмитрий Чернобровкин, веб-разработчик',
+      title: 'web is everything - Website creator',
       description: 'Веб-разработчик, который делает сайты целиком: от дизайна до запуска.',
       navWork: 'Работы', navAbout: 'Обо мне', navContact: 'Контакты', cta: 'Написать мне',
       h1a: 'Веб-разработчик, который делает сайты целиком: от ', h1b: 'дизайна', h1c: ' до ', h1d: 'запуска', h1e: '.',
@@ -41,7 +41,7 @@ window.SITE = (() => {
       shotLabels: ['первый экран', 'о продукте', 'как это работает', 'кейсы', 'тарифы', 'отзывы', 'заявка', 'подвал'],
     },
     en: {
-      title: 'web is everything — Dmitrii Chernobrovkin, web developer',
+      title: 'web is everything - Website creator',
       description: 'A web developer who builds whole websites: from design to launch.',
       navWork: 'Work', navAbout: 'About', navContact: 'Contact', cta: 'Get in touch',
       h1a: 'A web developer who builds whole websites: from ', h1b: 'design', h1c: ' to ', h1d: 'launch', h1e: '.',
