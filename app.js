@@ -730,7 +730,10 @@
     const prevP = P[(i - 1 + P.length) % P.length], nextP = P[(i + 1) % P.length];
     const num = pad2(i + 1);
     const counter = `${num} / ${pad2(P.length)}`;
-    const openLink = `<a class="open-link" href="${esc(p.url)}" target="_blank" rel="noopener">→ ${tm[p.link]}</a>`;
+    // Only projects with a real address get the "Visit site" link (url '#' means none yet).
+    const openLink = p.url && p.url !== '#'
+      ? `<a class="open-link" href="${esc(p.url)}" target="_blank" rel="noopener">→ ${tm[p.link]}</a>`
+      : '';
 
     if (!isMobile()) {
       const mobileShot = !p.shot && currentShot() === 'mobile';
