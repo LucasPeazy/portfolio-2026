@@ -56,7 +56,7 @@
   }
 
   function nav(d) {
-    return `<a class="lnk" href="#work">${roll(d.navWork)}</a>, <a class="lnk" href="#about">${roll(d.navAbout)}</a>, <a class="lnk" href="#contact">${roll(d.navContact)}</a>`;
+    return `<a class="lnk" href="#work">${roll(d.navWork)}</a><a class="lnk" href="#about">${roll(d.navAbout)}</a><a class="lnk" href="#contact">${roll(d.navContact)}</a>`;
   }
 
   function links(d) {
