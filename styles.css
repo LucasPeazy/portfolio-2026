@@ -181,6 +181,39 @@ section[id] { scroll-margin-top: 80px; }
 a:hover .roll > span, a:hover .roll::after { transform: translateY(-100%); }
 
 /* Hero */
+/* Background texture: faint 12-column rules that draw in after the loader, plus paper grain; both fade out downwards. */
+.hero { position: relative; isolation: isolate; }
+.hero-bg {
+  position: absolute;
+  inset: 0 0 -140px;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent);
+  mask-image: linear-gradient(to bottom, #000 45%, transparent);
+}
+.hero-bg .grid { height: 100%; padding: 0 var(--pad); }
+.hero-bg span {
+  border-left: 1px solid rgba(18, 18, 17, 0.07);
+  transform-origin: 50% 0;
+  transform: scaleY(0);
+  transition: transform 1.8s var(--ease-out);
+  transition-delay: calc(0.1s + var(--i) * 0.05s);
+}
+.hero-bg span:nth-child(12) { border-right: 1px solid rgba(18, 18, 17, 0.07); }
+.hero-in .hero-bg span { transform: none; }
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.07 0 0 0 0 0.07 0 0 0 0 0.07 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  opacity: 0.16;
+}
+@media (max-width: 759.98px) {
+  .hero-bg span:nth-child(n+5) { display: none; }
+  .hero-bg span:nth-child(4) { border-right: 1px solid rgba(18, 18, 17, 0.07); }
+}
+
 .hero { padding: var(--hero-pad) var(--pad) 0; }
 .hero h1 {
   grid-column: 1 / span 8;

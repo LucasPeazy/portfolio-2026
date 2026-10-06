@@ -118,6 +118,7 @@
 
 <main>
   <section id="top" class="hero">
+    <div class="hero-bg" aria-hidden="true"><div class="grid">${Array.from({ length: 12 }, (_, i) => `<span style="--i:${i}"></span>`).join('')}</div></div>
     <div class="grid">
       <h1 class="hero-title">${heroWords(d).join(' ')}</h1>
       <ul class="hero-links">
