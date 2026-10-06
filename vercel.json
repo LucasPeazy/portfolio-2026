@@ -39,47 +39,47 @@
   ],
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "www.webiseverything.com"
         }
       ],
-      "destination": "https://webiseverything.com/:path*",
+      "destination": "https://webiseverything.com/$1",
       "permanent": true
     },
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "web-is-everything.vercel.app"
         }
       ],
-      "destination": "https://webiseverything.com/:path*",
+      "destination": "https://webiseverything.com/$1",
       "permanent": true
     },
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "portfolio-2026-theta-three-92.vercel.app"
         }
       ],
-      "destination": "https://webiseverything.com/:path*",
+      "destination": "https://webiseverything.com/$1",
       "permanent": true
     },
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "portfolio-2026-lucaspeazys-projects.vercel.app"
         }
       ],
-      "destination": "https://webiseverything.com/:path*",
+      "destination": "https://webiseverything.com/$1",
       "permanent": true
     }
   ]
