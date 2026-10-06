@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const { LINKS, DICT, PROJECTS, SHOT_H, PHOTO, MARQUEE } = window.SITE;
+  const { LINKS, DICT, PROJECTS, SHOT_H, PHOTO, MARQUEE, STACK } = window.SITE;
   // Only projects with screenshots are shown; the rest stay in content.js for later.
   const P = PROJECTS.filter(p => p.shot);
   const ANGLES = [135, 45, 90, 0, 120, 60, 150, 30, 105, 75];
@@ -177,13 +177,31 @@
   <section id="about" class="section">
     <div class="sec-head grid" data-reveal="line"><h2 data-goo>${d.about}</h2></div>
     <div class="about-body grid">
-      <div class="photo" data-reveal="wipe"><div class="ph has-img"><img src="${PHOTO.src}" width="${PHOTO.w}" height="${PHOTO.h}" alt="${d.photoAlt}" loading="lazy" decoding="async"></div></div>
+      <div class="photo-col">
+        <div class="photo" data-reveal="wipe"><div class="ph has-img"><img src="${PHOTO.src}" width="${PHOTO.w}" height="${PHOTO.h}" alt="${d.photoAlt}" loading="lazy" decoding="async" data-parallax></div></div>
+        <div class="badge" aria-hidden="true">
+          <svg viewBox="0 0 120 120"><defs><path id="badge-path" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0"/></defs><text><textPath href="#badge-path" textLength="281" lengthAdjust="spacing">${d.badge}</textPath></text></svg>
+          <i></i>
+        </div>
+      </div>
       <div class="about-text">
         <p class="about-lead" data-goo>${d.aboutLead}</p>
         <p class="about-p" data-goo>${d.aboutText}</p>
+        <div class="stats" data-reveal>
+          ${d.stats.map(([n, label]) => {
+            const v = n === 'works' ? P.length : +n;
+            return `<div class="stat"><span class="stat-num" data-count="${v}">${v}</span><span class="stat-label" data-goo>${label}</span></div>`;
+          }).join('')}
+        </div>
         <div class="facts" data-reveal>
           <div><h3 data-goo>${d.langsLabel}</h3><p data-goo>${d.langs}</p></div>
-          <div><h3 data-goo>${d.stackLabel}</h3><p data-goo>React, Astro, Laravel, Tailwind, SCSS, GSAP, MySQL, MongoDB, Firebase, Figma</p></div>
+          <div><h3 data-goo>${d.stackLabel}</h3><ul class="chips">${STACK.map(t => `<li>${t}</li>`).join('')}</ul></div>
+        </div>
+        <div class="process">
+          <h3 data-goo>${d.processLabel}</h3>
+          <ol>
+            ${d.process.map(([name, text], i) => `<li data-reveal><span class="num" data-goo>(${pad2(i + 1)})</span><strong data-goo>${name}</strong><p data-goo>${text}</p></li>`).join('')}
+          </ol>
         </div>
       </div>
     </div>
@@ -264,6 +282,7 @@
       Object.entries(values).forEach(([k, v]) => { if (f.elements[k]) f.elements[k].value = v; });
     }
     splitHero();
+    syncParallax();
     if (inkOn) window.HeroInk.mount(app.querySelector('.hero'));
     buildFollower();
     syncFooter();
@@ -345,6 +364,33 @@
     app.querySelectorAll('.intro.hero-goo').forEach(el => goo(el, at + 650));
   }
 
+  /* ---------- About: count-up figures and photo parallax ---------- */
+
+  function countUp(el) {
+    const to = +el.dataset.count;
+    if (still || !to) return;
+    const t0 = performance.now(), dur = 1200 + to * 60;
+    const tick = now => {
+      const p = Math.min(1, (now - t0) / dur);
+      el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    el.textContent = '0';
+    requestAnimationFrame(tick);
+  }
+
+  // The photo drifts inside its frame while the section scrolls by.
+  function syncParallax() {
+    if (still) return;
+    app.querySelectorAll('[data-parallax]').forEach(img => {
+      const r = img.parentElement.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) return;
+      const p = (r.top + r.height / 2) / window.innerHeight - 0.5; // -0.5 .. 0.5 across the screen
+      img.style.transform = `translateY(${(p * -10).toFixed(2)}%) scale(1.14)`;
+    });
+  }
+  window.addEventListener('scroll', syncParallax, { passive: true });
+
   /* ---------- Scroll reveals ---------- */
 
   function observeReveals() {
@@ -367,6 +413,12 @@
       });
     }, { threshold: 0.15, rootMargin: '0px 0px -4% 0px' });
     observeGoo();
+    const countIO = new IntersectionObserver(entries => entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      countIO.unobserve(en.target);
+      countUp(en.target);
+    }), { threshold: 0.6 });
+    app.querySelectorAll('[data-count]').forEach(el => countIO.observe(el));
     io = new IntersectionObserver(entries => {
       // Blocks entering together come in one after another.
       let k = 0;

@@ -29,6 +29,16 @@ window.SITE = (() => {
       aboutLead: 'Работаю один, поэтому заказчик всегда говорит с тем, кто пишет код.',
       aboutText: 'Собираю задачу, рисую в Figma, верстаю, подключаю домен, оплату и аналитику. После запуска остаюсь на связи и показываю, как править сайт без меня.',
       langsLabel: 'Языки', langs: 'Русский, английский, итальянский', stackLabel: 'Стек',
+      // About: figures (the work count is filled in from the projects), process steps, photo badge.
+      stats: [['5', 'лет делаю сайты'], ['works', 'проектов в портфолио'], ['3', 'языка общения'], ['1', 'человек на всём проекте']],
+      processLabel: 'Как я работаю',
+      process: [
+        ['Бриф', 'Созваниваемся, разбираю задачу и предлагаю решение.'],
+        ['Дизайн', 'Рисую макет в Figma и согласую его с вами.'],
+        ['Разработка', 'Верстаю и собираю сайт: адаптив, анимации, формы.'],
+        ['Запуск', 'Подключаю домен, оплату и аналитику, показываю, как править сайт.'],
+      ],
+      badge: 'web is everything • веб-разработчик • ',
       contact: 'Контакты', big: 'Давайте сделаем\nсайт.', contactNote: 'Быстрее всего отвечаю в Telegram.',
       fName: 'Имя', fContact: 'Почта или Telegram', fTask: 'Коротко о задаче', send: 'Отправить',
       sending: 'Отправляю…', sendError: 'Не получилось отправить. Напишите мне в Telegram:',
@@ -59,6 +69,15 @@ window.SITE = (() => {
       aboutLead: 'I work solo, so you always talk to the person writing the code.',
       aboutText: 'I gather the brief, design in Figma, build the site, connect the domain, payments and analytics. After launch I stay in touch and show you how to edit the site without me.',
       langsLabel: 'Languages', langs: 'Russian, English, Italian', stackLabel: 'Stack',
+      stats: [['5', 'years building websites'], ['works', 'projects in the portfolio'], ['3', 'languages I work in'], ['1', 'person from brief to launch']],
+      processLabel: 'How I work',
+      process: [
+        ['Brief', 'We talk it through, I dig into the task and suggest a solution.'],
+        ['Design', 'I design the layout in Figma and agree it with you.'],
+        ['Build', 'I build the site: responsive layout, motion, forms.'],
+        ['Launch', 'I connect the domain, payments and analytics and show you how to edit the site.'],
+      ],
+      badge: 'web is everything • web developer • ',
       contact: 'Contact', big: "Let's build a site.", contactNote: 'Telegram is the fastest way to reach me.',
       fName: 'Name', fContact: 'Email or Telegram', fTask: 'What do you need?', send: 'Send',
       sending: 'Sending…', sendError: "Couldn't send that. Message me on Telegram:",
@@ -129,11 +148,14 @@ window.SITE = (() => {
 
   const PHOTO = { src: 'assets/me.webp', w: 1100, h: 1467 };
 
+  // Stack chips in the About section.
+  const STACK = ['React', 'Astro', 'Laravel', 'Tailwind', 'SCSS', 'GSAP', 'MySQL', 'MongoDB', 'Firebase', 'Figma'];
+
   // Words in the accent marquee between Work and Services.
   const MARQUEE = ['React', 'Astro', 'Laravel', 'Shopify', 'Tailwind', 'CSS', 'SCSS', 'GSAP', 'JavaScript', 'MySQL', 'MongoDB', 'Firebase', 'Figma'];
 
   // Placeholder screenshot section heights, px (until real screenshots exist).
   const SHOT_H = { desktop: [720, 560, 640, 600, 560, 480, 520, 240], mobile: [740, 620, 880, 760, 820, 600, 640, 300] };
 
-  return { LINKS, DICT, PROJECTS, SHOT_H, PHOTO, MARQUEE };
+  return { LINKS, DICT, PROJECTS, SHOT_H, PHOTO, MARQUEE, STACK };
 })();
