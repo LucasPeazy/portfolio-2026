@@ -225,9 +225,17 @@ a:hover .roll > span, a:hover .roll::after { transform: translateY(-100%); }
   padding-bottom: 56px;
 }
 .hero > .grid { flex: 1; align-content: space-between; }
+/* Short screens: scale the title and top padding with the viewport height so the hero still fits. */
+.hero { padding-top: min(var(--hero-pad), 11svh); }
+.hero h1 { font-size: clamp(42px, min(6.6vw, 12.5svh), 120px); }
+.hero .intro { margin-top: min(80px, 6svh); }
+/* The hero background ends at the fold, and Work starts right below it. */
+.hero .hero-bg { inset: 0; }
+#work { padding-top: 0; }
 @media (max-width: 759.98px) {
   .hero { min-height: calc(100svh - 84px - 56px); padding-bottom: 32px; }
   .hero > .grid { align-content: start; }
+  #work { padding-top: 56px; }
 }
 /* boards.html frames are as tall as the page, so give the hero a fixed screen height there */
 .is-frame .hero { min-height: 840px; }
