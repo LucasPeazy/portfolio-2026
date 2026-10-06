@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>web is everything — макеты</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body { margin: 0; background: #E4E4E1; -webkit-font-smoothing: antialiased; }
+a { color: #121211; }
+a:hover { color: #0339F8; }
+.board { padding: 96px; font-family: 'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #121211; display: flex; flex-direction: column; gap: 160px; width: max-content; }
+.board header { display: flex; flex-direction: column; gap: 12px; max-width: 900px; }
+.board header p { margin: 0; font-size: 20px; }
+.board header p:first-child { font-weight: 600; }
+.board header p + p { color: #5E5E5A; line-height: 1.4; }
+.board section { display: flex; flex-direction: column; gap: 40px; }
+.board h2 { margin: 0; font-size: 56px; font-weight: 500; letter-spacing: -0.03em; }
+.row { display: flex; gap: 96px; align-items: flex-start; }
+.row.tight { gap: 64px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, 1440px); gap: 96px; }
+.frame { display: flex; flex-direction: column; gap: 16px; }
+.frame p { margin: 0; font-size: 22px; color: #5E5E5A; }
+.frame iframe { display: block; border: 0; background: #F3F3F1; outline: 1px solid rgba(18, 18, 17, 0.14); }
+.d { width: 1440px; }
+.m { width: 390px; }
+.modal-d { width: 1440px; height: 900px; }
+.modal-m { width: 390px; height: 844px; }
+</style>
+</head>
+<body>
+<div class="board">
+  <header>
+    <p>web is everything — портфолио</p>
+    <p>Макеты собраны из одной живой страницы <a href="index.html">index.html</a>: в ней работают наведение на работы, попап, переключатель RU / EN и форма. Здесь она показана в нужных размерах и состояниях.</p>
+  </header>
+
+  <section>
+    <h2>Десктоп, 1440 px</h2>
+    <div class="row">
+      <div class="frame"><p>(RU) /ru</p><iframe class="d" data-frame="d-ru" style="height:6200px" src="index.html?lang=ru&amp;frame=d-ru" title="RU desktop"></iframe></div>
+      <div class="frame"><p>(EN) /en</p><iframe class="d" data-frame="d-en" style="height:6200px" src="index.html?lang=en&amp;frame=d-en" title="EN desktop"></iframe></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Мобильная, 390 px</h2>
+    <div class="row">
+      <div class="frame"><p>(RU) /ru</p><iframe class="m" data-frame="m-ru" style="height:9000px" src="index.html?lang=ru&amp;frame=m-ru" title="RU mobile"></iframe></div>
+      <div class="frame"><p>(EN) /en</p><iframe class="m" data-frame="m-en" style="height:9000px" src="index.html?lang=en&amp;frame=m-en" title="EN mobile"></iframe></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Окно проекта, десктоп</h2>
+    <div class="grid2">
+      <div class="frame"><p>(RU) Скриншот в начале</p><iframe class="modal-d" src="index.html?lang=ru&amp;modal=1" title="Modal start"></iframe></div>
+      <div class="frame"><p>(RU) Пролистан до середины</p><iframe class="modal-d" src="index.html?lang=ru&amp;modal=1&amp;scroll=0.5" title="Modal middle"></iframe></div>
+      <div class="frame"><p>(RU) Мобильная версия, середина</p><iframe class="modal-d" src="index.html?lang=ru&amp;modal=4&amp;shot=mobile&amp;scroll=0.5" title="Modal mobile shot"></iframe></div>
+      <div class="frame"><p>(EN) Скриншот в начале</p><iframe class="modal-d" src="index.html?lang=en&amp;modal=4" title="Modal EN"></iframe></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Окно проекта, мобильная</h2>
+    <div class="row tight">
+      <div class="frame"><p>(RU) В начале</p><iframe class="modal-m" src="index.html?lang=ru&amp;modal=1" title="Mobile modal start"></iframe></div>
+      <div class="frame"><p>(RU) Середина</p><iframe class="modal-m" src="index.html?lang=ru&amp;modal=1&amp;scroll=0.5" title="Mobile modal middle"></iframe></div>
+      <div class="frame"><p>(RU) «Подробнее» открыто</p><iframe class="modal-m" src="index.html?lang=ru&amp;modal=1&amp;details=1" title="Mobile modal details"></iframe></div>
+      <div class="frame"><p>(EN) Середина</p><iframe class="modal-m" src="index.html?lang=en&amp;modal=4&amp;scroll=0.5" title="Mobile modal EN"></iframe></div>
+    </div>
+  </section>
+</div>
+<script>
+// Full-page frames report their content height; grow each iframe to fit.
+window.addEventListener('message', e => {
+  const d = e.data;
+  if (!d || d.wie !== 'h' || !d.id) return;
+  const f = document.querySelector(`iframe[data-frame="${d.id}"]`);
+  if (f && e.source === f.contentWindow) f.style.height = d.h + 'px';
+});
+</script>
+</body>
+</html>
