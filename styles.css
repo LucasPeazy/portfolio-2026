@@ -47,6 +47,7 @@ body {
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  font-variant-emoji: text; /* arrows and © as text glyphs, not emoji (iOS) */
 }
 a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em; transition: color .2s ease; }
 a:hover { color: var(--accent); }

@@ -7,6 +7,8 @@
   const ANGLES = [135, 45, 90, 0, 120, 60, 150, 30, 105, 75];
   const SHOWN = 6;
   const pad2 = n => String(n).padStart(2, '0');
+  // ↗ followed by U+FE0E (text presentation), otherwise iOS draws it as an emoji.
+  const EXT = ' \u2197\uFE0E';
   const shotSrc = p => `assets/works/${p.slug}.webp`;
   const thumbSrc = p => `assets/works/${p.slug}-thumb.webp`;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -68,7 +70,7 @@
       label: l.key === 'mail' ? d.mail : l.key,
       href: l.href,
       ext: l.ext ? ' target="_blank" rel="noopener"' : '',
-      text: d.link[l.text] + (l.ext ? ' ↗' : ''),
+      text: d.link[l.text] + (l.ext ? EXT : ''),
     }));
   }
 
@@ -222,7 +224,7 @@
       </div>
       <div class="footer-col">
         <h2 data-goo-footer>${d.footLinks}</h2>
-        ${lk.map(l => `<a class="lnk" data-goo-footer href="${l.href}"${l.ext}>${roll(l.label + (l.ext ? ' ↗' : ''))}</a>`).join('')}
+        ${lk.map(l => `<a class="lnk" data-goo-footer href="${l.href}"${l.ext}>${roll(l.label + (l.ext ? EXT : ''))}</a>`).join('')}
       </div>
     </div>
     <p class="footer-mark" data-goo-footer aria-hidden="true">web is everything<span class="accent">.</span></p>
