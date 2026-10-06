@@ -222,7 +222,7 @@ a:hover .roll > span, a:hover .roll::after { transform: translateY(-100%); }
   flex-direction: column;
   min-height: calc(100vh - 60px);
   min-height: calc(100svh - 60px);
-  padding-bottom: 56px;
+  padding-bottom: clamp(56px, 12svh, 140px); /* keeps the intro off the very bottom of the screen */
 }
 .hero > .grid { flex: 1; align-content: space-between; }
 /* Short screens: scale the title and top padding with the viewport height so the hero still fits. */
