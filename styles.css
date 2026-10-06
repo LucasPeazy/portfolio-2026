@@ -507,6 +507,8 @@ main {
   overflow: hidden;
 }
 .footer.is-static { position: relative; }
+.is-frame .footer-inner { min-height: 900px; }
+@media (max-width: 759.98px) { .is-frame .footer-inner { min-height: 788px; } }
 .footer-inner {
   display: flex;
   flex-direction: column;

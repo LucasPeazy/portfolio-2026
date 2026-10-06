@@ -417,6 +417,7 @@
   /* ---------- Contact form panel ---------- */
 
   let contactReturn = null;
+  let formOpenedAt = Date.now();
 
   function openContact(opener) {
     const panel = app.querySelector('.contact-panel');
@@ -424,6 +425,7 @@
     contactReturn = opener || document.activeElement;
     clearHover(app.querySelector('.work-list'));
     state.contact = true;
+    formOpenedAt = Date.now();
     panel.inert = false;
     panel.classList.add('is-open');
     document.documentElement.style.overflow = 'hidden';
@@ -516,7 +518,7 @@
       const res = await fetch('api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...Object.fromEntries(new FormData(form)), lang: state.lang }),
+        body: JSON.stringify({ ...Object.fromEntries(new FormData(form)), lang: state.lang, elapsed: Date.now() - formOpenedAt }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok || !json.ok) throw new Error(json.error || res.status);
@@ -824,6 +826,8 @@
   /* ---------- Boot ---------- */
 
   app.classList.add(still ? 'hero-in' : 'reveal-init');
+  // In boards.html frames the viewport is as tall as the page, so screen-height blocks get a fixed height.
+  if (frameId) document.documentElement.classList.add('is-frame');
   renderPage();
   initLenis();
   syncHeader();

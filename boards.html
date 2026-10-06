@@ -72,14 +72,6 @@ a:hover { color: #0339F8; }
     </div>
   </section>
 </div>
-<script>
-// Full-page frames report their content height; grow each iframe to fit.
-window.addEventListener('message', e => {
-  const d = e.data;
-  if (!d || d.wie !== 'h' || !d.id) return;
-  const f = document.querySelector(`iframe[data-frame="${d.id}"]`);
-  if (f && e.source === f.contentWindow) f.style.height = d.h + 'px';
-});
-</script>
+<script src="boards.js"></script>
 </body>
 </html>
