@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 — web is everything</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Absolute paths: this page is served for any missing URL, at any depth. -->
+<link rel="stylesheet" href="/styles.css">
+<style>
+.nf { position: relative; isolation: isolate; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
+.nf .hero-bg { inset: 0; }
+.nf-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  padding: 0 var(--pad);
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.nf-main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 48px var(--pad); }
+/* undo the main-page <main> layer (solid background over the sticky footer) */
+main.nf-main { z-index: auto; background: none; box-shadow: none; overflow: visible; }
+.nf-code {
+  margin: 0;
+  font-size: clamp(140px, 30vw, 460px);
+  line-height: 0.8;
+  letter-spacing: -0.07em;
+  font-weight: 500;
+}
+.nf-code .line { display: block; padding-bottom: 0.1em; margin-bottom: -0.1em; clip-path: inset(-0.2em -0.2em 0 -0.2em); }
+.nf-code .line-inner { display: block; animation: nf-rise 1.2s var(--ease-out) .1s both; }
+@keyframes nf-rise { from { transform: translateY(110%) rotate(3deg); } }
+.nf-text {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gap);
+  row-gap: 28px;
+  margin-top: 48px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ink);
+  animation: nf-fade .9s ease .5s both;
+}
+.nf-text h1 { grid-column: 1 / span 5; margin: 0; font-size: clamp(24px, 2.6vw, 38px); line-height: 1.12; letter-spacing: -0.025em; font-weight: 500; }
+.nf-text h1 span { display: block; color: var(--muted); }
+.nf-text p { grid-column: 7 / span 3; margin: 0; font-size: 15px; line-height: 1.55; }
+.nf-links { grid-column: 10 / span 3; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 15px; }
+@keyframes nf-fade { from { opacity: 0; transform: translateY(16px); } }
+@media (max-width: 759.98px) {
+  .nf-text h1, .nf-text p, .nf-links { grid-column: 1 / -1; }
+}
+</style>
+</head>
+<body>
+<div class="nf hero-in">
+  <div class="hero-bg" aria-hidden="true"><div class="grid"><span style="--i:0"></span><span style="--i:1"></span><span style="--i:2"></span><span style="--i:3"></span><span style="--i:4"></span><span style="--i:5"></span><span style="--i:6"></span><span style="--i:7"></span><span style="--i:8"></span><span style="--i:9"></span><span style="--i:10"></span><span style="--i:11"></span></div></div>
+
+  <header class="nf-top">
+    <a href="/" class="logo">web is everything</a>
+    <span class="muted">404</span>
+  </header>
+
+  <main class="nf-main">
+    <p class="nf-code" aria-hidden="true"><span class="line"><span class="line-inner">404<span class="accent">.</span></span></span></p>
+    <div class="nf-text">
+      <h1>Такой страницы нет. <span lang="en">This page doesn’t exist.</span></h1>
+      <p>Возможно, ссылка устарела или в адресе опечатка. Всё остальное на месте.<br><br><span lang="en" class="muted">The link may be outdated or mistyped. Everything else is where it was.</span></p>
+      <nav class="nf-links">
+        <a class="lnk" href="/"><span class="roll" data-t="→ На главную / Home"><span>→ На главную / Home</span></span></a>
+        <a class="lnk" href="/#work"><span class="roll" data-t="→ Работы / Work"><span>→ Работы / Work</span></span></a>
+        <a class="lnk" href="https://t.me/whitenovacanee" target="_blank" rel="noopener"><span class="roll" data-t="→ Telegram ↗"><span>→ Telegram ↗</span></span></a>
+      </nav>
+    </div>
+  </main>
+</div>
+</body>
+</html>
