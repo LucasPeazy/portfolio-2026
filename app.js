@@ -130,7 +130,6 @@
       <span class="count">${list.length} ${d.of} ${P.length}</span>
     </div>
     <div class="rows work-list">
-      <div class="preview ph" aria-hidden="true"><span class="tag"></span></div>
       ${list.map((p, i) => `
       <article class="work-row" data-i="${i}" data-reveal>
         <a class="work-link grid" href="#work/${p.slug}" data-open="${i}">
@@ -224,6 +223,7 @@
       Object.entries(values).forEach(([k, v]) => { if (f.elements[k]) f.elements[k].value = v; });
     }
     splitHero();
+    buildFollower();
     if (revealStarted) {
       if (animate && io) observeReveals();
       else app.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-in'));
@@ -283,31 +283,63 @@
     };
   })());
 
-  /* ---------- Hover preview (desktop) ---------- */
+  /* ---------- Hover preview (desktop): follows the cursor over the work list ---------- */
+
+  // One layer per project, stacked, so switching rows cross-fades with no image loading flash.
+  const follower = document.createElement('div');
+  follower.className = 'cursor-preview';
+  follower.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(follower);
+
+  function buildFollower() {
+    follower.innerHTML = P.map((p, i) => p.shot
+      ? `<div class="cp-layer" style="background-image:url('${thumbSrc(p)}')"></div>`
+      : `<div class="cp-layer cp-ph" style="background-image:repeating-linear-gradient(${ANGLES[i % ANGLES.length]}deg, rgba(18,18,17,0.08) 0px, rgba(18,18,17,0.08) 1px, transparent 1px, transparent 9px)"><span class="tag">(${pad2(i + 1)}) ${p.name}, ${t().preview}</span></div>`
+    ).join('');
+  }
+
+  const cursor = { x: 0, y: 0, cx: 0, cy: 0, active: false, raf: 0 };
+
+  function followLoop() {
+    const k = still ? 1 : 0.14;
+    cursor.cx += (cursor.x - cursor.cx) * k;
+    cursor.cy += (cursor.y - cursor.cy) * k;
+    // Lean into the direction of movement.
+    const tilt = Math.max(-12, Math.min(12, (cursor.x - cursor.cx) * 0.06));
+    follower.style.transform = `translate3d(${cursor.cx}px, ${cursor.cy}px, 0) translate(-50%, -50%) rotate(${tilt}deg)`;
+    const settled = Math.abs(cursor.x - cursor.cx) < 0.3 && Math.abs(cursor.y - cursor.cy) < 0.3;
+    cursor.raf = cursor.active || !settled ? requestAnimationFrame(followLoop) : 0;
+  }
 
   function hoverRow(row) {
     const list = row.closest('.work-list');
     const i = +row.dataset.i;
-    const p = P[i];
-    const prev = list.querySelector('.preview');
     state.lastHover = i;
     list.querySelectorAll('.work-row.is-hover').forEach(r => r.classList.remove('is-hover'));
     row.classList.add('is-hover');
     list.classList.add('has-hover');
-    prev.style.top = Math.max(-60, row.offsetTop + row.offsetHeight / 2 - 150) + 'px';
-    prev.classList.toggle('has-img', !!p.shot);
-    prev.style.backgroundImage = p.shot
-      ? `url("${thumbSrc(p)}")`
-      : `repeating-linear-gradient(${ANGLES[i % ANGLES.length]}deg, rgba(18,18,17,0.08) 0px, rgba(18,18,17,0.08) 1px, transparent 1px, transparent 9px)`;
-    prev.querySelector('.tag').textContent = `(${pad2(i + 1)}) ${p.name}, ${t().preview}`;
+    follower.querySelectorAll('.cp-layer').forEach((l, j) => l.classList.toggle('is-on', j === i));
+    if (!cursor.active) {
+      cursor.active = true;
+      follower.classList.add('is-visible');
+      if (!cursor.raf) cursor.raf = requestAnimationFrame(followLoop);
+    }
   }
 
   function clearHover(list) {
+    cursor.active = false;
+    follower.classList.remove('is-visible');
     if (!list) return;
     list.classList.remove('has-hover');
     list.querySelectorAll('.work-row.is-hover').forEach(r => r.classList.remove('is-hover'));
   }
 
+  app.addEventListener('mousemove', e => {
+    if (!e.target.closest('.work-list')) return;
+    if (!cursor.active) { cursor.cx = e.clientX; cursor.cy = e.clientY; } // appear right at the pointer
+    cursor.x = e.clientX;
+    cursor.y = e.clientY;
+  });
   app.addEventListener('mouseover', e => {
     if (isMobile()) return;
     const row = e.target.closest('.work-row');
@@ -529,6 +561,7 @@
 
   function openModal(i, opener, opts = {}) {
     returnFocus = opener || document.activeElement;
+    clearHover(app.querySelector('.work-list'));
     state.modal = i;
     state.details = !!opts.details;
     document.body.classList.add('modal-open');

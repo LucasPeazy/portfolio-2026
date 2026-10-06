@@ -84,8 +84,6 @@ input, textarea, button { font: inherit; color: inherit; }
 .ph.has-img { padding: 0; overflow: hidden; background-image: none; }
 .ph.has-img img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
 .photo .ph.has-img img { object-position: 50% 30%; }
-.preview.has-img { background-size: cover; background-position: 50% 0; padding: 0; }
-.preview.has-img .tag { display: none; }
 .shot-img { display: block; width: 100%; height: auto; background: var(--ph); }
 
 /* Header: full-width bar at the top, a floating rounded bar once scrolled (html.hdr-float). */
@@ -244,19 +242,32 @@ a:hover .roll > span, a:hover .roll::after { transform: translateY(-100%); }
 
 /* Work */
 .work-list { position: relative; }
-.preview {
-  position: absolute;
-  z-index: 0;
-  pointer-events: none;
-  left: calc((100% + 24px) * 6 / 12);
-  width: calc((100% + 24px) * 4 / 12 - 24px);
-  height: 300px;
+/* Cursor-following project preview (desktop) */
+.cursor-preview {
+  position: fixed;
+  left: 0;
   top: 0;
-  opacity: 0;
-  transition: opacity .35s ease, top .5s cubic-bezier(.2,.7,.2,1);
+  z-index: 15;
+  width: clamp(260px, 24vw, 380px);
+  aspect-ratio: 16 / 10;
+  pointer-events: none;
+  will-change: transform;
 }
-.work-list.has-hover .preview { opacity: 1; }
-@media (max-width: 759.98px) { .preview { display: none; } }
+.cursor-preview .cp-layer {
+  position: absolute;
+  inset: 0;
+  background-color: var(--ph);
+  background-size: cover;
+  background-position: 50% 0;
+  border: 1px solid var(--ph-border);
+  box-shadow: 0 24px 50px -24px rgba(18, 18, 17, 0.45);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity .35s ease, transform .55s var(--ease-out);
+}
+.cursor-preview .cp-ph { display: flex; align-items: flex-end; padding: 14px; }
+.cursor-preview.is-visible .cp-layer.is-on { opacity: 1; transform: none; }
+@media (max-width: 759.98px), (hover: none) { .cursor-preview { display: none; } }
 .work-row { position: relative; z-index: 1; border-bottom: 1px solid var(--line); }
 .work-link {
   row-gap: 12px;
